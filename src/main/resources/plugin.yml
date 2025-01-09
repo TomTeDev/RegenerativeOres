@@ -1,0 +1,4 @@
+name: RegenerativeOres
+version: '${project.version}'
+main: more.mucho.regenerativeores.RegenerativeOres
+api-version: '1.20'
