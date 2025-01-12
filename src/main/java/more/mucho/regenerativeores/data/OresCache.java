@@ -1,6 +1,6 @@
 package more.mucho.regenerativeores.data;
 
-import more.mucho.regenerativeores.Ore;
+import more.mucho.regenerativeores.ores.Ore;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.checkerframework.checker.nullness.qual.NonNull;

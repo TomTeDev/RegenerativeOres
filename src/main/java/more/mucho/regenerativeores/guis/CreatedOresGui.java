@@ -1,6 +1,6 @@
 package more.mucho.regenerativeores.guis;
 
-import more.mucho.regenerativeores.Ore;
+import more.mucho.regenerativeores.ores.Ore;
 import more.mucho.regenerativeores.guis.framework.InventoryButton;
 import more.mucho.regenerativeores.guis.framework.ModernBaseGui;
 import more.mucho.regenerativeores.items.ItemBuilder;
