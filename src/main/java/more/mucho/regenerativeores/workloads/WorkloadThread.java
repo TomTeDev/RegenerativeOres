@@ -2,6 +2,7 @@ package more.mucho.regenerativeores.workloads;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class WorkloadThread implements Runnable {
 
@@ -10,7 +11,7 @@ public class WorkloadThread implements Runnable {
     private static final double MAX_MILLIS_PER_TICK = 20;
     private static final int MAX_NANOS_PER_TICK = (int) (MAX_MILLIS_PER_TICK * 1E6);
 
-    private final Deque<Workload> workloadDeque = new ArrayDeque<>();
+    private final ConcurrentLinkedDeque<Workload> workloadDeque = new ConcurrentLinkedDeque<>();
 
     public void addWorkload(Workload workload) {
         this.workloadDeque.add(workload);

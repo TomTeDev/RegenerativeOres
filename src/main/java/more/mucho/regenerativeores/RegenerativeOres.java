@@ -18,7 +18,7 @@ import javax.annotation.CheckForNull;
 public final class RegenerativeOres extends JavaPlugin {
     private WorkloadThread workloadThread = null;
     private BukkitTask workloadTask = null;
-
+    private RegeneratorImpl regenerator = null;
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -29,6 +29,8 @@ public final class RegenerativeOres extends JavaPlugin {
                 new BlockBreakListener(OresCache.i())
         );
         registerCommands();
+        regenerator = new RegeneratorImpl();
+        regenerator.enable();
     }
 
     @Override
@@ -48,6 +50,9 @@ public final class RegenerativeOres extends JavaPlugin {
     }
 
     private void startWorkload() {
+        regenerator.disable();
+        regenerator = null;
+
         stopWorkload();
         workloadThread = new WorkloadThread();
         workloadTask = Bukkit.getScheduler().runTaskTimer(this, workloadThread, 0, 1);
