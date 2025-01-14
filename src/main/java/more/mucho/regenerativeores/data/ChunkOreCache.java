@@ -1,7 +1,5 @@
 package more.mucho.regenerativeores.data;
 
-import more.mucho.regenerativeores.ores.Ore;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.HashMap;
@@ -13,7 +11,7 @@ public class ChunkOreCache {
     private final String worldName;
     private final int chunkX;
     private final int chunkZ;
-    private final HashMap<String, Ore> ores;
+    private final HashMap<String, Integer> ores;
 
     public ChunkOreCache(String worldName, int chunkX, int chunkZ) {
         this.worldName = worldName;
@@ -22,22 +20,20 @@ public class ChunkOreCache {
         this.ores = new HashMap<>();
     }
 
-    public ChunkOreCache(String worldName, int chunkX, int chunkZ, HashMap<String, Ore> ores) {
+    public ChunkOreCache(String worldName, int chunkX, int chunkZ, HashMap<String, Integer> ores) {
         this.worldName = worldName;
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
         this.ores = ores;
     }
 
-    public Optional<Ore> getOre(Location location) {
-        Bukkit.broadcastMessage("Get ore for key:"+getOreKey(location));
+    public Optional<Integer> getOreID(Location location) {
         return Optional.ofNullable(ores.get(getOreKey(location)));
     }
 
 
-    public void addOre(Location location, Ore ore) {
-        Bukkit.broadcastMessage("Add ore for key: "+getOreKey(location));
-        ores.put(getOreKey(location), ore);
+    public void addOre(Location location, int oreID) {
+        ores.put(getOreKey(location), oreID);
     }
 
     public void removeOre(Location location) {

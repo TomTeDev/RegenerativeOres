@@ -2,7 +2,11 @@ package more.mucho.regenerativeores.ores;
 
 import more.mucho.regenerativeores.RegenerativeOres;
 import more.mucho.regenerativeores.events.OreMineEvent;
+import more.mucho.regenerativeores.ores.commands.MiningCommand;
+import more.mucho.regenerativeores.ores.drops.MiningDrop;
 import more.mucho.regenerativeores.ores.mining_blocks.MiningBlock;
+import more.mucho.regenerativeores.ores.player_test.PlayerTest;
+import more.mucho.regenerativeores.ores.variants.PermissionTestable;
 import more.mucho.regenerativeores.ores.variants.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppable, MessageSupport,CommandExecutable, ExperienceProvider {
+public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppable, MessageSupport,CommandExecutable {
     private final int id;
     private final int delay;
     private final MiningBlock material;
@@ -24,11 +28,11 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
     private final List<MiningDrop> drops = new ArrayList<>();
     private final MiningMessage message;
     private final List<MiningCommand> commands = new ArrayList<>();
-    private final MiningExp miningExp;
+
 
     public BasicOre(int id, int delay, MiningBlock material, MiningBlock replacement,
                     PlayerTest permissionTest, PlayerTest toolTest,
-                    List<MiningDrop> drops, MiningMessage message,List<MiningCommand> commands,MiningExp miningExp) {
+                    List<MiningDrop> drops, MiningMessage message,List<MiningCommand> commands) {
         this.id = id;
         this.delay = delay;
         this.material = material;
@@ -43,7 +47,6 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
             this.commands.addAll(commands);
         }
 
-        this.miningExp = miningExp;
     }
 
     @Override
@@ -73,9 +76,10 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
         if(toolTest!=null&&toolTest.test(miner)){
             miner.sendMessage(toolTest.getDenyMessage());
         }
+        Location dropLocation = location.clone().add(0.5,0.5,0.5);
         for(MiningDrop miningDrop : drops){
             if(!miningDrop.testDrop())continue;
-            miningDrop.drop(miner,location);
+            miningDrop.drop(miner,dropLocation);
         }
         for(MiningCommand miningCommand : commands){
             if(!miningCommand.test())continue;
@@ -83,9 +87,6 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
         }
         if(message!=null){
             message.send(miner);
-        }
-        if(miningExp!=null&&miningExp.testDrop()){
-            miningExp.addExp(miner,location);
         }
 
         replace(location);
@@ -102,12 +103,69 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
         Bukkit.broadcastMessage("Replace");
         replacement.place(location);
     }
-
     @Override
     public boolean serialize(ConfigurationSection section) {
-        // Serialization logic
-        return true;
+        if (section == null) {
+            return false;
+        }
+
+        try {
+            // Basic properties
+            section.set("id", id);
+            section.set("delay", delay);
+
+            // Serialize MiningBlock material and replacement
+            ConfigurationSection materialSection = section.createSection("material");
+            material.serialize(materialSection);
+
+            ConfigurationSection replacementSection = section.createSection("replacement");
+            replacement.serialize(replacementSection);
+
+            // Serialize optional permissionTest and toolTest
+            if (permissionTest != null) {
+                ConfigurationSection permissionSection = section.createSection("permissionTest");
+                permissionTest.serialize(permissionSection);
+            }
+
+            if (toolTest != null) {
+                ConfigurationSection toolSection = section.createSection("toolTest");
+                toolTest.serialize(toolSection);
+            }
+
+            // Serialize drops
+            if (!drops.isEmpty()) {
+                ConfigurationSection dropsSection = section.createSection("drops");
+                for (int i = 0; i < drops.size(); i++) {
+                    MiningDrop drop = drops.get(i);
+                    ConfigurationSection dropSection = dropsSection.createSection("drop" + i);
+                    drop.serialize(dropSection);
+                }
+            }
+
+            // Serialize commands
+            if (!commands.isEmpty()) {
+                ConfigurationSection commandsSection = section.createSection("commands");
+                for (int i = 0; i < commands.size(); i++) {
+                    MiningCommand command = commands.get(i);
+                    ConfigurationSection commandSection = commandsSection.createSection("command" + i);
+                    command.serialize(commandSection);
+                }
+            }
+
+            // Serialize message
+            if (message != null) {
+                ConfigurationSection messageSection = section.createSection("message");
+                message.serialize(messageSection);
+            }
+
+            return true;
+        } catch (Exception e) {
+            Bukkit.getLogger().severe("Failed to serialize BasicOre: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
+
 
     @Override
     public Optional<PlayerTest> getPermissionTest() { return Optional.ofNullable(permissionTest); }
@@ -127,8 +185,4 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
         return commands;
     }
 
-    @Override
-    public Optional<MiningExp> getMiningExp() {
-        return Optional.ofNullable(miningExp);
-    }
 }

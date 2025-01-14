@@ -16,7 +16,7 @@ import java.util.UUID;
 public class PlayerProfiles {
     private final static HashMap<String,PlayerProfile> profiles = new HashMap<>();
     private static int profileCounter = 100;
-    public PlayerProfile get(String texture)throws Exception{
+    public static PlayerProfile get(String texture)throws Exception{
         URL url = valueToUrl(texture);
         return getOrCreate(url);
     }

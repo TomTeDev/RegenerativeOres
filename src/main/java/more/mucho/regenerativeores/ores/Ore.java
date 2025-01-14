@@ -15,6 +15,4 @@ public interface Ore {
     void replace(Location location);
     boolean serialize (ConfigurationSection section);
 
-
-
 }

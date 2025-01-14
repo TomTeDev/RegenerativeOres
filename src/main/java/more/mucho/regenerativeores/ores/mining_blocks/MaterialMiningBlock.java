@@ -4,6 +4,7 @@ import more.mucho.regenerativeores.RegenerativeOres;
 import more.mucho.regenerativeores.workloads.WorkloadThread;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 
 
 public class MaterialMiningBlock implements MiningBlock {
@@ -23,4 +24,22 @@ public class MaterialMiningBlock implements MiningBlock {
                         () -> location.getBlock().setType(material)
                 );
     }
+    @Override
+    public void serialize(ConfigurationSection section) {
+        section.set("type", "material");
+        section.set("value", material.name());
+    }
+
+    public static MiningBlock deserialize(ConfigurationSection section) {
+        String materialName = section.getString("value");
+        if (materialName == null) {
+            throw new IllegalArgumentException("Material value is missing.");
+        }
+        Material material = Material.getMaterial(materialName.toUpperCase());
+        if (material == null) {
+            throw new IllegalArgumentException("Invalid material: " + materialName);
+        }
+        return new MaterialMiningBlock(material);
+    }
+
 }

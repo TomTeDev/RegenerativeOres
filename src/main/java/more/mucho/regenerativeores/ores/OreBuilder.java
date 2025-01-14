@@ -1,6 +1,10 @@
 package more.mucho.regenerativeores.ores;
 
+import more.mucho.regenerativeores.ores.commands.MiningCommand;
+import more.mucho.regenerativeores.ores.drops.MiningDrop;
+
 import more.mucho.regenerativeores.ores.mining_blocks.MiningBlock;
+import more.mucho.regenerativeores.ores.player_test.PlayerTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +19,7 @@ public class OreBuilder {
     private List<MiningDrop> drops = new ArrayList<>();
     private List<MiningCommand> commands = new ArrayList<>();
     private MiningMessage message = null;
-    private MiningExp miningExp = null;
+
 
     // Required fields
     public OreBuilder(int id, int delay, MiningBlock material, MiningBlock replacement) {
@@ -65,10 +69,7 @@ public class OreBuilder {
         return this;
     }
 
-    public OreBuilder withMiningExp(MiningExp miningExp) {
-        this.miningExp = miningExp;
-        return this;
-    }
+
 
     // Build method
     public Ore build() {
@@ -81,8 +82,7 @@ public class OreBuilder {
                 toolTest,
                 drops,
                 message,
-                commands,
-                miningExp
+                commands
         );
     }
 }

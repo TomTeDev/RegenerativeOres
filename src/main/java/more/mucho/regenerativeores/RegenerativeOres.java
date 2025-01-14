@@ -19,9 +19,12 @@ public final class RegenerativeOres extends JavaPlugin {
     private WorkloadThread workloadThread = null;
     private BukkitTask workloadTask = null;
     private RegeneratorImpl regenerator = null;
+    private OresImpl ores = null;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
+        loadOres();
         startWorkload();
         setupOresCache();
         registerListeners(
@@ -41,6 +44,7 @@ public final class RegenerativeOres extends JavaPlugin {
         regenerator = null;
         stopWorkload();
         OresCache.i().clear();
+        ores = null;
     }
 
     private void stopWorkload() {
@@ -92,8 +96,22 @@ public final class RegenerativeOres extends JavaPlugin {
         }
     }
 
-    public Regenerator getRegenerator(){
+    public Regenerator getRegenerator() {
         return regenerator;
+    }
+
+    public Ores getOres() {
+        return ores;
+    }
+
+    private void loadOres() {
+        ores = new OresImpl();
+        try {
+            ores.load();
+            //TODO change this
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

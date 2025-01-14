@@ -1,8 +1,7 @@
 package more.mucho.regenerativeores.ores;
 
-import more.mucho.regenerativeores.events.OreMineEvent;
+import more.mucho.regenerativeores.ores.drops.MiningDrop;
 import more.mucho.regenerativeores.utils.Random;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
