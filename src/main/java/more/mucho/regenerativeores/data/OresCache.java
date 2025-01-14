@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class OresCache {
     private static OresCache INSTANCE = null;
-    private HashMap<String, ChunkOreCache> chunkOres = new HashMap<>();
+    private final HashMap<String, ChunkOreCache> chunkOres = new HashMap<>();
 
     private OresCache() {
 
@@ -31,7 +31,7 @@ public class OresCache {
                 .flatMap(chunkOreCache -> chunkOreCache.getOre(location));
     }
     public void addOre(Location location, Ore ore) {
-        getChunkOreCache(location,true).get().addOre(location,ore);
+        getChunkOreCache(location,true).ifPresent(chunkOreCache -> chunkOreCache.addOre(location,ore));
     }
     private Optional<ChunkOreCache> getChunkOreCache(@NonNull Location location,boolean forceCreate) {
         ChunkOreCache chunkOreCache = chunkOres.getOrDefault(getChunkKey(location),null);

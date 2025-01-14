@@ -1,10 +1,15 @@
 package more.mucho.regenerativeores.ores;
 
+import more.mucho.regenerativeores.RegenerativeOres;
+import more.mucho.regenerativeores.events.OreMineEvent;
 import more.mucho.regenerativeores.ores.mining_blocks.MiningBlock;
 import more.mucho.regenerativeores.ores.variants.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +20,10 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
     private final MiningBlock replacement;
     private final PlayerTest permissionTest;
     private final PlayerTest toolTest;
-    private final List<MiningDrop> drops;
+
+    private final List<MiningDrop> drops = new ArrayList<>();
     private final MiningMessage message;
-    private final List<MiningCommand> commands;
+    private final List<MiningCommand> commands = new ArrayList<>();
     private final MiningExp miningExp;
 
     public BasicOre(int id, int delay, MiningBlock material, MiningBlock replacement,
@@ -29,9 +35,14 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
         this.replacement = replacement;
         this.permissionTest = permissionTest;
         this.toolTest = toolTest;
-        this.drops = drops;
+        if(drops!=null){
+            this.drops.addAll(drops);
+        }
         this.message = message;
-        this.commands = commands;
+        if (commands!=null){
+            this.commands.addAll(commands);
+        }
+
         this.miningExp = miningExp;
     }
 
@@ -48,13 +59,48 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
     public MiningBlock getReplacement() { return replacement; }
 
     @Override
-    public void mine(Player miner) {
+    public void mine(Player miner,Location location) {
+        Bukkit.broadcastMessage("Mine");
+        OreMineEvent event = new OreMineEvent(miner,this,location);
+        Bukkit.getPluginManager().callEvent(event);
+        if(event.isCancelled())return;
+
+        Bukkit.broadcastMessage("Mined");
         // Mining logic
+        if(permissionTest!=null&&permissionTest.test(miner)){
+            miner.sendMessage(permissionTest.getDenyMessage());
+        }
+        if(toolTest!=null&&toolTest.test(miner)){
+            miner.sendMessage(toolTest.getDenyMessage());
+        }
+        for(MiningDrop miningDrop : drops){
+            if(!miningDrop.testDrop())continue;
+            miningDrop.drop(miner,location);
+        }
+        for(MiningCommand miningCommand : commands){
+            if(!miningCommand.test())continue;
+            miningCommand.execute(miner);
+        }
+        if(message!=null){
+            message.send(miner);
+        }
+        if(miningExp!=null&&miningExp.testDrop()){
+            miningExp.addExp(miner,location);
+        }
+
+        replace(location);
+
+        RegenerativeOres.getPlugin(RegenerativeOres.class).getRegenerator().scheduleRegen(this,location);
     }
 
     @Override
-    public void regen() {
-        // Regeneration logic
+    public void regen(Location location) {
+        material.place(location);
+    }
+    @Override
+    public void replace(Location location){
+        Bukkit.broadcastMessage("Replace");
+        replacement.place(location);
     }
 
     @Override

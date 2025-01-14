@@ -14,21 +14,15 @@ import java.util.Optional;
 
 public class OresFactory {
 
-    public MiningExp craftMiningExp(Range<Integer, Integer> range, int dropChance, boolean isDirect) {
+    public static MiningExp craftMiningExp(Range<Integer, Integer> range, int dropChance, boolean isDirect) {
         return new MiningExpImpl(range, dropChance, isDirect);
     }
 
     public MiningDrop craftMiningDrop(Range<Integer, Integer> amountRange, ItemStack drop, int chance, @Nullable Sound sound, @Nullable MiningMessage message) {
-        return new MiningDropImpl(amountRange, drop, chance, sound, message);
+        return new MiningDropImpl(amountRange, drop, chance, sound, message,null);
     }
 
-    public Ore oreOre(String type, Location location, Material material) {
 
-    }
-
-    public static Ore fromSection(ConfigurationSection section) {
-
-    }
 
     private static class MiningExpImpl implements MiningExp {
         private final Range<Integer, Integer> rage;

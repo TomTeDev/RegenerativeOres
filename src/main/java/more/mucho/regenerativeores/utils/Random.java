@@ -20,5 +20,5 @@ public class Random {
         }
 
         // Other utility methods can be added here
-    }
+
 }

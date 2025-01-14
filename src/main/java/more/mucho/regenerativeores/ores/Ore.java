@@ -10,8 +10,9 @@ public interface Ore {
     int getDelay();
     MiningBlock getMaterial();
     MiningBlock getReplacement();
-    void mine(Player miner);
+    void mine(Player miner,Location location);
     void regen(Location location);
+    void replace(Location location);
     boolean serialize (ConfigurationSection section);
 
 

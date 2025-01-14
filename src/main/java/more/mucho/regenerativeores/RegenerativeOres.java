@@ -26,7 +26,8 @@ public final class RegenerativeOres extends JavaPlugin {
         setupOresCache();
         registerListeners(
                 new GuiListener(),
-                new BlockBreakListener(OresCache.i())
+                new BlockBreakListener(OresCache.i()),
+                new TestListener()
         );
         registerCommands();
         regenerator = new RegeneratorImpl();
@@ -36,6 +37,8 @@ public final class RegenerativeOres extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        regenerator.disable();
+        regenerator = null;
         stopWorkload();
         OresCache.i().clear();
     }
@@ -50,8 +53,6 @@ public final class RegenerativeOres extends JavaPlugin {
     }
 
     private void startWorkload() {
-        regenerator.disable();
-        regenerator = null;
 
         stopWorkload();
         workloadThread = new WorkloadThread();
@@ -89,6 +90,10 @@ public final class RegenerativeOres extends JavaPlugin {
                 pluginCommand.setTabCompleter(customCommand);
             }
         }
+    }
+
+    public Regenerator getRegenerator(){
+        return regenerator;
     }
 
 

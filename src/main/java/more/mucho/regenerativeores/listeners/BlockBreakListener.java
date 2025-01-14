@@ -16,7 +16,7 @@ public class BlockBreakListener implements Listener {
     }
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
-        oresCache.getOre(event.getPlayer().getLocation()).ifPresent(ore -> ore.mine(event.getPlayer()));
+        oresCache.getOre(event.getBlock().getLocation()).ifPresent(ore -> ore.mine(event.getPlayer(),event.getBlock().getLocation()));
     }
     @EventHandler
     public void onInteract(PlayerInteractEvent event){

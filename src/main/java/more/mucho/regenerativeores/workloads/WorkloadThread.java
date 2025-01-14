@@ -1,7 +1,5 @@
 package more.mucho.regenerativeores.workloads;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class WorkloadThread implements Runnable {

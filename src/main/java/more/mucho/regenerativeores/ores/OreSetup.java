@@ -61,9 +61,9 @@ public class OreSetup {
 
     public void mine(Player player,Location location) {
         if(!canMine(player,location))return;
-        OreMineEvent event = new OreMineEvent();
-        Bukkit.getPluginManager().callEvent(event);
-        if(event.isCancelled())return;
+        //OreMineEvent event = new OreMineEvent(player,ore,location);
+        //Bukkit.getPluginManager().callEvent(event);
+        //if(event.isCancelled())return;
 
         if(this.sound !=null){
             player.playSound(player,sound,1,1);
