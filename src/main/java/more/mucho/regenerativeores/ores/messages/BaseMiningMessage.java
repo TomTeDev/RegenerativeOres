@@ -24,10 +24,10 @@ public class BaseMiningMessage implements MiningMessage {
                 target.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacy(message));
                 break;
             case TITLE_BIG:
-                target.sendTitle(message,null,0,20,0);
+                target.sendTitle(message,"",10,60,10);
                 break;
             case TITLE_SMALL:
-                target.sendTitle(null,message,0,20,0);
+                target.sendTitle("",message,0,20,0);
                 break;
         }
     }

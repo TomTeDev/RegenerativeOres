@@ -50,7 +50,9 @@ public abstract class ModernBaseGui implements GUI {
     public int getSize() {
         return this.size;
     }
-
+    public void open(Player player){
+        openInventory(player, getInventory());
+    }
     public void addButton(int slot, InventoryButton button) {
         this.buttonMap.put(slot, button);
     }

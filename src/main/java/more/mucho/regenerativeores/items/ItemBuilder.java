@@ -1,83 +1,88 @@
 package more.mucho.regenerativeores.items;
 
+import com.google.common.base.Preconditions;
+import more.mucho.regenerativeores.RegenerativeOres;
 import more.mucho.regenerativeores.utils.Colors;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.*;
 
 public class ItemBuilder extends ItemBuilderBase {
 
     public static ItemStack AIR = new ItemStack(Material.AIR);
-    private boolean isGlowing = false;
-    private boolean showAttributes = false;
 
-    public ItemBuilder(Material material) {
-        super(new ItemStack(material));
+    private Set<ItemFlag> flags = new HashSet<>();
+    private Map<Enchantment, Integer> enchants = new HashMap<>();
+    private ItemStack ogItem = null;
+    //private final List<LoreNode> loreNodes = new ArrayList<>();
+    public ItemBuilder(@NonNull Material material) {
+        super(material);
     }
 
-    public ItemBuilder(ItemStack item) {
+    public ItemBuilder(@NonNull ItemStack item) {
         super(item);
+        this.ogItem = item;
         unwrap(item);
     }
 
-    public ItemBuilder(Material material, String displayName, String... lore) {
+    @Override
+    public Plugin getPlugin() {
+        return RegenerativeOres.getPlugin(RegenerativeOres.class);
+    }
+
+    public ItemBuilder(@NonNull Material material, @NonNull String displayName, @NonNull String... lore) {
         super(new ItemStack(material));
         this.displayName = displayName;
         this.lore = Arrays.stream(lore).toList();
     }
 
     public ItemBuilder setAmount(int amount) {
+        Preconditions.checkArgument(amount >= 0, "Amount must be greater or equal 0");
         this.amount = amount;
         return this;
     }
 
-    public ItemBuilder setDisplayName(String _displayName) {
+    public ItemBuilder setDisplayName(@NonNull String _displayName) {
         this.displayName = _displayName;
         return this;
     }
 
-    public ItemBuilder addTag(String tagName, Object tagValue) {
-        //TODO implement
-/*        NbtOps instance = NbtOps.INSTANCE;
-        if (val instanceof String) {
-            return instance.createString((String) val);
-        } else if (val instanceof Integer) {
-            return instance.createInt((int) val);
-        } else if (val instanceof Double) {
-            return instance.createDouble((double) val);
-        } else if (val instanceof Boolean) {
-            return instance.createBoolean((boolean) val);
-        } else if (val instanceof Long) {
-            return instance.createLong((long) val);
-        } else if (val instanceof Byte) {
-            return instance.createByte((byte) val);
-        } else if (val instanceof Short) {
-            return instance.createShort((short) val);
-        } else if (val instanceof Float) {
-            return instance.createFloat((float) val);
-        } else if (val instanceof List) {
-            // You need to handle the list elements and convert them to Tag types
-            ListTag listTag = new ListTag();
-            for (Object element : (List<?>) val) {
-                listTag.add(convertToTag(element));
-            }
-            return listTag;
-        } else if (val instanceof Map) {
-            // You need to handle the map entries and convert them to Tag types
-            CompoundTag compoundTag = new CompoundTag();
-            Map<?, ?> map = (Map<?, ?>) val;
-            for (Map.Entry<?, ?> entry : map.entrySet()) {
-                compoundTag.put(entry.getKey().toString(), convertToTag(entry.getValue()));
-            }
-            return compoundTag;
-        } else {
-            throw new IllegalArgumentException("Unsupported type: " + val.getClass().getSimpleName());
-        }*/
+    public ItemBuilder addTag(@NonNull String tagName, Object tagValue) {
+        setTag(tagName, tagValue);
         return this;
+    }
+
+    public ItemBuilder addLoreNode(String nodeId, LoreNode.Priority priority) {
+        Map<String, LoreNode.Priority> nodes = getLoreNodes();
+        nodes.put(nodeId, priority);
+        setLoreNodes(nodes);
+        return this;
+    }
+
+    public ItemBuilder removeLoreNode(String nodeId) {
+        Map<String, LoreNode.Priority> nodes = getLoreNodes();
+        if (nodes.containsKey(nodeId)) {
+            nodes.remove(nodeId); // Remove the node if it exists
+            setLoreNodes(nodes); // Save the updated map
+        }
+        return this;
+    }
+
+
+    protected List<LoreNode> getSortedLoreNodes() {
+        Map<String, LoreNode.Priority> nodes = getLoreNodes();
+        return nodes.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue()) // Sort by priority
+                .map(entry -> new LoreNode(entry.getValue(), entry.getKey(),
+                        LoreNodeRegistry.getFunctionById(entry.getKey()))) // Convert to LoreNode
+                .toList();
     }
 
     public ItemBuilder setLore(List<String> lore) {
@@ -86,8 +91,7 @@ public class ItemBuilder extends ItemBuilderBase {
     }
 
     public ItemBuilder setLore(String... lore) {
-        this.lore = new ArrayList<>(List.of(lore));
-        return this;
+        return setLore(Arrays.asList(lore));
     }
 
     public ItemBuilder addLoreLine(String... lore) {
@@ -107,14 +111,39 @@ public class ItemBuilder extends ItemBuilderBase {
     }
 
     public ItemBuilder addGlowEffect() {
-        this.isGlowing = true;
-        return this;
+        this.addFlag(ItemFlag.HIDE_ENCHANTS);
+        if (material == Material.BOW) {
+            return this.addEnchant(Enchantment.LURE, 1);
+        } else {
+            return this.addEnchant(Enchantment.ARROW_INFINITE, 1);
+        }
     }
 
     public ItemBuilder showAttributes() {
-        this.showAttributes = true;
+        this.flags.remove(ItemFlag.HIDE_ATTRIBUTES);
         return this;
     }
+
+    public ItemBuilder addFlag(ItemFlag flag) {
+        this.flags.add(flag);
+        return this;
+    }
+
+    public ItemBuilder removeFlag(ItemFlag flag) {
+        this.flags.remove(flag);
+        return this;
+    }
+
+    public ItemBuilder addEnchant(Enchantment enchantment, int level) {
+        enchants.put(enchantment, level);
+        return this;
+    }
+
+    public ItemBuilder removeEnchant(Enchantment enchantment) {
+        enchants.remove(enchantment);
+        return this;
+    }
+
 
     public ItemBuilder parsePlaceholdersDisplayName(String placeholder, String value) {
         if (this.displayName != null) {
@@ -123,9 +152,17 @@ public class ItemBuilder extends ItemBuilderBase {
         return this;
     }
 
+    private List<String> getLoreFromTag(){
+        if(!hasTag(ItemTags.LORE))return new ArrayList<>();
+        return Arrays.stream(getTagOrDefault(ItemTags.LORE, PersistentDataType.STRING,"").split("\n")).toList();
+
+    }
+    private void saveLoreToTag(List<String> lore){
+        addTag(ItemTags.LORE,String.join("\n",lore));
+    }
 
     public ItemStack build() {
-        ItemStack item = getItem();
+        ItemStack item = this.ogItem ==null?new ItemStack(material) : this.ogItem;
         if (item.getItemMeta() == null) return item;
         ItemMeta meta = item.getItemMeta();
         if (this.displayName != null) {
@@ -134,24 +171,31 @@ public class ItemBuilder extends ItemBuilderBase {
             }
             meta.setDisplayName(this.displayName);
         }
+        // Generate and sort lore nodes
+        List<String> finalLore = new ArrayList<>();
         if (this.lore != null) {
+            finalLore.addAll(this.lore); // Add existing lore lines
+            saveLoreToTag(this.lore);
+        }
+        copyTags(meta.getPersistentDataContainer());
+
+        getSortedLoreNodes().stream().map(node -> node.generateLorePart(meta))
+                .forEach(finalLore::add);
+        // Apply color and set lore
+        if (!finalLore.isEmpty()) {
             if (colorLore) {
-                List<String> cLore = new ArrayList<>();
-                for (String s : this.lore) {
-                    cLore.add(Colors.addColor(s));
-                }
-                this.lore = cLore;
+                finalLore = finalLore.stream().map(Colors::addColor).toList();
             }
-            meta.setLore(this.lore);
+            meta.setLore(finalLore);
         }
-        if (this.isGlowing) {
-            meta.addEnchant(Enchantment.LURE, 1, true);
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
-        if (!this.showAttributes) {
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        }
+        meta.addItemFlags(flags.toArray(new ItemFlag[0]));
+
+        meta.removeEnchantments();
+        enchants.forEach((enchant, level) -> {
+            meta.addEnchant(enchant, level, true);
+        });
         item.setAmount(this.amount);
+
         item.setItemMeta(meta);
         return item;
     }
@@ -163,8 +207,15 @@ public class ItemBuilder extends ItemBuilderBase {
                 this.displayName = meta.getDisplayName();
             }
             if (meta.hasLore()) {
-                this.lore = meta.getLore();
+                if(hasTag(ItemTags.LORE)){
+                    this.lore = getLoreFromTag();
+
+                }else{
+                    this.lore = meta.getLore();
+                }
             }
+            this.flags = meta.getItemFlags();
+            this.enchants = new HashMap<>(meta.getEnchants());
         }
         this.amount = itemStack.getAmount();
     }
@@ -178,5 +229,14 @@ public class ItemBuilder extends ItemBuilderBase {
         return item;
     }
 
-
+    public static ItemStack craftInfoItem(String... infos) {
+        List<String> lore = new ArrayList<>();
+        for (String s : infos) {
+            lore.add(Colors.SILVER + s);
+        }
+        return new ItemBuilder(Material.KNOWLEDGE_BOOK)
+                .setDisplayName(Colors.INDIGO + "Informacja (?)")
+                .setLore(lore)
+                .build();
+    }
 }

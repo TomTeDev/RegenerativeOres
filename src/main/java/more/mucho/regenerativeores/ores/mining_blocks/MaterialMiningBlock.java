@@ -4,7 +4,9 @@ import more.mucho.regenerativeores.RegenerativeOres;
 import more.mucho.regenerativeores.workloads.WorkloadThread;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 
 public class MaterialMiningBlock implements MiningBlock {
@@ -13,6 +15,16 @@ public class MaterialMiningBlock implements MiningBlock {
 
     public MaterialMiningBlock(Material material) {
         this.material = material;
+    }
+
+    @Override
+    public ItemStack asItem() {
+        return new ItemStack(material);
+    }
+
+    @Override
+    public boolean matchesType(Block block) {
+        return block.getType() == material;
     }
 
     @Override

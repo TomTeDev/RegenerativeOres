@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Skull;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.profile.PlayerProfile;
 
 public class PlayerHeadMiningBlock implements MiningBlock {
@@ -18,6 +19,17 @@ public class PlayerHeadMiningBlock implements MiningBlock {
 
     public PlayerHeadMiningBlock(PlayerProfile headProfile) {
         this.headProfile = headProfile;
+    }
+
+    @Override
+    public ItemStack asItem() {
+        //TODO apply texture;
+        return new ItemStack(Material.PLAYER_HEAD);
+    }
+
+    @Override
+    public boolean matchesType(Block block) {
+        return block.getType() == Material.PLAYER_HEAD;
     }
 
     @Override

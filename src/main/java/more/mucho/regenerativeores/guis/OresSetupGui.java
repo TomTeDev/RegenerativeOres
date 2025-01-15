@@ -1,5 +1,6 @@
-package more.mucho.regenerativeores.guis.framework;
+package more.mucho.regenerativeores.guis;
 
+import more.mucho.regenerativeores.guis.framework.ModernBaseGui;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 public class OresSetupGui extends ModernBaseGui {

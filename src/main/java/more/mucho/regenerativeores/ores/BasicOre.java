@@ -62,19 +62,19 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
     public MiningBlock getReplacement() { return replacement; }
 
     @Override
-    public void mine(Player miner,Location location) {
-        Bukkit.broadcastMessage("Mine");
+    public boolean mine(Player miner,Location location) {
+        if(!material.matchesType(location.getBlock()))return false;
         OreMineEvent event = new OreMineEvent(miner,this,location);
         Bukkit.getPluginManager().callEvent(event);
-        if(event.isCancelled())return;
-
-        Bukkit.broadcastMessage("Mined");
+        if(event.isCancelled())return false;
         // Mining logic
-        if(permissionTest!=null&&permissionTest.test(miner)){
+        if(permissionTest!=null&&!permissionTest.test(miner)){
             miner.sendMessage(permissionTest.getDenyMessage());
+            return false;
         }
-        if(toolTest!=null&&toolTest.test(miner)){
+        if(toolTest!=null&&!toolTest.test(miner)){
             miner.sendMessage(toolTest.getDenyMessage());
+            return false;
         }
         Location dropLocation = location.clone().add(0.5,0.5,0.5);
         for(MiningDrop miningDrop : drops){
@@ -92,6 +92,7 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
         replace(location);
 
         RegenerativeOres.getPlugin(RegenerativeOres.class).getRegenerator().scheduleRegen(this,location);
+        return true;
     }
 
     @Override
@@ -100,7 +101,6 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
     }
     @Override
     public void replace(Location location){
-        Bukkit.broadcastMessage("Replace");
         replacement.place(location);
     }
     @Override

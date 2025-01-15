@@ -31,6 +31,12 @@ public abstract class BaseDrop implements MiningDrop {
     public boolean testDrop() {
         return Random.randomInt(100) < dropChance;
     }
+    @Override
+    public void drop(Player target, Location dropLocation) {
+        if(message!=null){
+            message.send(target);
+        }
+    }
     public void sendMessage(Player target) {
         if (message == null) return;
         message.send(target);

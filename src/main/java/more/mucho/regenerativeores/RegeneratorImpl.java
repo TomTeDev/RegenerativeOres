@@ -19,8 +19,7 @@ public class RegeneratorImpl implements Regenerator {
         }
     }
 
-    private record RegenObject(Location location, Ore ore, long regenTime) {
-    }
+    private record RegenObject(Location location, Ore ore, long regenTime) {}
 
     public void enable() {
         if (bukkitTask != null) {

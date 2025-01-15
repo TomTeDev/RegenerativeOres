@@ -1,13 +1,18 @@
 package more.mucho.regenerativeores;
 
+import more.mucho.regenerativeores.commands.BasicMessagesHandler;
 import more.mucho.regenerativeores.commands.CustomCommand;
+import more.mucho.regenerativeores.commands.MessagesHandler;
+import more.mucho.regenerativeores.commands.OresCommand;
 import more.mucho.regenerativeores.data.OresCache;
+import more.mucho.regenerativeores.items.LoreNodeRegistry;
 import more.mucho.regenerativeores.listeners.BlockBreakListener;
 import more.mucho.regenerativeores.listeners.GuiListener;
 import more.mucho.regenerativeores.workloads.WorkloadThread;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,14 +37,18 @@ public final class RegenerativeOres extends JavaPlugin {
                 new BlockBreakListener(OresCache.i()),
                 new TestListener()
         );
-        registerCommands();
+        registerCommands(
+                new OresCommand(new BasicMessagesHandler(), "ores")
+        );
         regenerator = new RegeneratorImpl();
         regenerator.enable();
+        LoreNodeRegistry.initialize();
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+
         regenerator.disable();
         regenerator = null;
         stopWorkload();

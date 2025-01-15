@@ -1,5 +1,6 @@
 package more.mucho.regenerativeores.ores.player_test;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -14,8 +15,9 @@ public class BasicToolTest implements PlayerTest{
 
     @Override
     public boolean test(Player player) {
-        ItemStack itemInUse = player.getItemInUse();
-        return itemInUse!=null&& !itemInUse.getType().isAir()&&isSimilarToRequiredTool(itemInUse);
+        ItemStack itemInUse = player.getInventory().getItemInMainHand();
+        return !itemInUse.getType().isAir()&&
+                isSimilarToRequiredTool(itemInUse);
     }
 
     @Override
@@ -25,7 +27,7 @@ public class BasicToolTest implements PlayerTest{
 
     private boolean isSimilarToRequiredTool(ItemStack itemInUse) {
         //TODO MAKE IT BETTER...
-        return itemInUse.getType().equals(requiredTool.getType());
+        return itemInUse.getType() == requiredTool.getType();
     }
 
 

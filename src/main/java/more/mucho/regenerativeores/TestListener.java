@@ -29,7 +29,7 @@ import java.util.Arrays;
 
 public class TestListener implements Listener {
 
-
+    private static int ID_TO_REMOVE_JUST_FOR_TESTING_OK = 1;
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.getBlockPlaced().getType() != Material.GRANITE) return;
@@ -43,13 +43,16 @@ public class TestListener implements Listener {
         assert profile != null;
 
 
-        Ore ore = new BasicOre(1, 5, new MaterialMiningBlock(Material.GRASS_BLOCK), new PlayerHeadMiningBlock(profile),
-                null, new BasicToolTest(new ItemStack(Material.DIAMOND_PICKAXE), "Musisz miec diamond pikaks"),
+        Ore ore = new BasicOre(ID_TO_REMOVE_JUST_FOR_TESTING_OK++, 5,
+                new MaterialMiningBlock(Material.GRASS_BLOCK),
+                new PlayerHeadMiningBlock(profile),
+                null,
+                new BasicToolTest(new ItemStack(Material.DIAMOND_PICKAXE), "Musisz miec diamond pikaks"),
                 Arrays.asList(
-                        new BaseItemDrop(Range.of(1, 5), 50, true, new BaseMiningMessage(DISPLAY_ACTION.ACTION_BAR, "Dropło!"), new ItemStack(Material.APPLE), Sound.AMBIENT_CAVE, null),
-                        new BaseExpDrop(Range.of(1, 5), 50, true, new BaseMiningMessage(DISPLAY_ACTION.ACTION_BAR, "Expisko!"))
+                        new BaseItemDrop(Range.of(1, 5), 20, false, new BaseMiningMessage(DISPLAY_ACTION.ACTION_BAR, "Dropło!"), new ItemStack(Material.APPLE), Sound.BLOCK_NOTE_BLOCK_PLING, null),
+                        new BaseExpDrop(Range.of(1, 5), 20, false, new BaseMiningMessage(DISPLAY_ACTION.TITLE_SMALL, "Expisko!"))
 
-                ), new BaseMiningMessage(DISPLAY_ACTION.ACTION_BAR, "Wykopano!"), Arrays.asList(new BaseMiningCommand(50, "give Muchomore APPLE 1"))
+                ), new BaseMiningMessage(DISPLAY_ACTION.CHAT, "Wykopano!"), Arrays.asList(new BaseMiningCommand(5, "give Muchomore APPLE 1"))
         );
         saveOre(ore);
         Location location = event.getBlockPlaced().getLocation().clone();

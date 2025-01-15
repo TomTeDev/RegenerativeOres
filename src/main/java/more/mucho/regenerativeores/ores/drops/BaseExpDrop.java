@@ -21,8 +21,8 @@ public class BaseExpDrop extends BaseDrop {
         MineExpEvent mineExpEvent = new MineExpEvent(target, exp);
         Bukkit.getPluginManager().callEvent(mineExpEvent);
         if (mineExpEvent.isCancelled()) return;
+        super.drop(target,dropLocation);
         int finalExp = mineExpEvent.getExp();
-        Bukkit.broadcastMessage("Exp: "+exp);
         if (isDirect) {
             target.giveExp(finalExp);
         } else {

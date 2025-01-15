@@ -1,6 +1,7 @@
 package more.mucho.regenerativeores;
 
 import com.google.common.base.Preconditions;
+import more.mucho.regenerativeores.data.OresCache;
 import more.mucho.regenerativeores.ores.Ore;
 import more.mucho.regenerativeores.ores.OreBuilder;
 import more.mucho.regenerativeores.ores.commands.CommandsFactory;
@@ -14,21 +15,61 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 public class OresImpl implements Ores{
     private final HashMap<Integer, Ore> ores = new HashMap<>(); //<id,ore>
+    private int incrementalID = 0;
     public void registerOre(Ore ore){
-        Preconditions.checkArgument(!ores.containsKey(ore.getID()),"Ore with ID "+ore.getID()+" already registered");
-        //TODO add info to that error, on how to o
+        Preconditions.checkArgument(!ores.containsKey(ore.getID()),"Ore with ID "+ore.getID()+" already registered, use #Ores.getNextID() to obtain next ID");
         ores.put(ore.getID(),ore);
     }
+    public ArrayList<Ore> getOres(){
+        return new ArrayList<>(ores.values());
+    }
+    public Optional<Integer> getNextID(){
+        incrementalID++;
+        try {
+            updateIDInConfig();
+        }catch (Exception exception){
+            incrementalID--;
+            exception.printStackTrace();
+            return Optional.empty();
+        }
+        return Optional.of(incrementalID);
+    }
+    private void updateIDInConfig()throws  Exception{
+        ConfigHandler configHandler = new ConfigHandler(RegenerativeOres.getPlugin(RegenerativeOres.class),"ores.yml");
+        FileConfiguration cfg = configHandler.getConfig();
+        cfg.set("incremental_id",incrementalID);
+        configHandler.saveConfig(cfg);
+    }
+
+    @Override
+    public boolean deleteOre(int oreID) throws Exception {
+        //remove from config;
+        deleteOreFromFile(oreID);
+        //remove from map
+        ores.remove(oreID);
+        //remove from cache
+        OresCache.i().jakusunacoreidztychwszystkichtychtakich?
+        remove from cache;
+        remove from map;
+        return false;
+    }
+    private void deleteOreFromFile(int id)throws Exception{
+        ConfigHandler configHandler = new ConfigHandler(RegenerativeOres.getPlugin(RegenerativeOres.class),"ores.yml");
+        FileConfiguration cfg = configHandler.getConfig();
+        cfg.set("ores."+id,null);
+        configHandler.saveConfig(cfg);
+    }
+
     public Optional<Ore> getOre(int id){
         return Optional.ofNullable(ores.get(id));
     }
     public void load()throws Exception{
         FileConfiguration cfg = new ConfigHandler(RegenerativeOres.getPlugin(RegenerativeOres.class),"ores.yml").getConfig();
+        incrementalID = cfg.getInt("incremental_id");
         ConfigurationSection oresSection = cfg.getConfigurationSection("ores");
         if(oresSection == null||oresSection.getKeys(false).isEmpty())return;
         int oresLoaded = 0;
@@ -59,5 +100,12 @@ public class OresImpl implements Ores{
         }
 
         Bukkit.getLogger().info(oresLoaded + " ores loaded.");
+    }
+
+    /**
+     * Saves ore to config
+     */
+    public void saveOre(Ore ore) throws Exception{
+ewq
     }
 }
