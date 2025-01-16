@@ -1,6 +1,6 @@
 package more.mucho.regenerativeores;
 
-import more.mucho.regenerativeores.data.OresCache;
+import more.mucho.regenerativeores.data.OresCacheImpl;
 import more.mucho.regenerativeores.ores.BasicOre;
 import more.mucho.regenerativeores.ores.Ore;
 import more.mucho.regenerativeores.ores.Range;
@@ -12,13 +12,11 @@ import more.mucho.regenerativeores.ores.messages.DISPLAY_ACTION;
 import more.mucho.regenerativeores.ores.mining_blocks.MaterialMiningBlock;
 import more.mucho.regenerativeores.ores.mining_blocks.PlayerHeadMiningBlock;
 import more.mucho.regenerativeores.ores.player_test.BasicToolTest;
-import more.mucho.regenerativeores.utils.ConfigHandler;
 import more.mucho.regenerativeores.utils.PlayerProfiles;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -29,7 +27,9 @@ import java.util.Arrays;
 
 public class TestListener implements Listener {
 
-    private static int ID_TO_REMOVE_JUST_FOR_TESTING_OK = 1;
+
+
+
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.getBlockPlaced().getType() != Material.GRANITE) return;
@@ -42,8 +42,10 @@ public class TestListener implements Listener {
         }
         assert profile != null;
 
-
-        Ore ore = new BasicOre(ID_TO_REMOVE_JUST_FOR_TESTING_OK++, 5,
+        Ores ores = RegenerativeOres.getPlugin(RegenerativeOres.class).getOres();
+        int incrementalID = ores.getNextID();
+        Bukkit.broadcastMessage("Next ID: " + incrementalID);
+        Ore ore = new BasicOre(incrementalID, 5,
                 new MaterialMiningBlock(Material.GRASS_BLOCK),
                 new PlayerHeadMiningBlock(profile),
                 null,
@@ -54,22 +56,20 @@ public class TestListener implements Listener {
 
                 ), new BaseMiningMessage(DISPLAY_ACTION.CHAT, "Wykopano!"), Arrays.asList(new BaseMiningCommand(5, "give Muchomore APPLE 1"))
         );
-        saveOre(ore);
         Location location = event.getBlockPlaced().getLocation().clone();
         ore.regen(location);
-        OresCache.i().addOre(location, ore);
-        RegenerativeOres.getPlugin(RegenerativeOres.class).getOres().registerOre(ore);
-    }
 
-    private void saveOre(Ore ore){
         try {
-            ConfigHandler configHandler = new ConfigHandler(RegenerativeOres.getPlugin(RegenerativeOres.class),"ores.yml");
-            FileConfiguration cfg = configHandler.getConfig();
-            ConfigurationSection section = cfg.createSection("ores."+ore.getID());
-            ore.serialize(section);
-            configHandler.saveConfig(cfg);
+            OresCacheImpl.i().addOre(location, ore);
+            OresCacheImpl.i().saveOreLocations(location,ore.getID());
+
+
+            ores.registerOre(ore);
+            ores.saveOre(ore);
         }catch (Exception exception){
             exception.printStackTrace();
         }
     }
+
+
 }

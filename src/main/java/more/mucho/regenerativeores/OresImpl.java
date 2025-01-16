@@ -1,7 +1,6 @@
 package more.mucho.regenerativeores;
 
 import com.google.common.base.Preconditions;
-import more.mucho.regenerativeores.data.OresCache;
 import more.mucho.regenerativeores.ores.Ore;
 import more.mucho.regenerativeores.ores.OreBuilder;
 import more.mucho.regenerativeores.ores.commands.CommandsFactory;
@@ -17,84 +16,92 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.*;
 
-public class OresImpl implements Ores{
-    private final HashMap<Integer, Ore> ores = new HashMap<>(); //<id,ore>
+public class OresImpl implements Ores {
+    private final ConfigHandler configHandler;
+    private final FileConfiguration cfg;
+    private final Map<Integer, Ore> ores = new HashMap<>(); //<id, ore>
     private int incrementalID = 0;
-    public void registerOre(Ore ore){
-        Preconditions.checkArgument(!ores.containsKey(ore.getID()),"Ore with ID "+ore.getID()+" already registered, use #Ores.getNextID() to obtain next ID");
-        ores.put(ore.getID(),ore);
+
+
+    public OresImpl() throws Exception {
+        configHandler = new ConfigHandler(RegenerativeOres.getPlugin(RegenerativeOres.class), "ores.yml");
+        cfg = configHandler.getConfig();
     }
-    public ArrayList<Ore> getOres(){
+
+    public void registerOre(Ore ore) {
+        Preconditions.checkArgument(!ores.containsKey(ore.getID()),
+                "Ore with ID " + ore.getID() + " already registered. Use #getNextID() to obtain the next ID.");
+        ores.put(ore.getID(), ore);
+    }
+
+    public List<Ore> getOres() {
         return new ArrayList<>(ores.values());
     }
-    public Optional<Integer> getNextID(){
-        incrementalID++;
-        try {
-            updateIDInConfig();
-        }catch (Exception exception){
-            incrementalID--;
-            exception.printStackTrace();
-            return Optional.empty();
-        }
-        return Optional.of(incrementalID);
-    }
-    private void updateIDInConfig()throws  Exception{
-        ConfigHandler configHandler = new ConfigHandler(RegenerativeOres.getPlugin(RegenerativeOres.class),"ores.yml");
-        FileConfiguration cfg = configHandler.getConfig();
-        cfg.set("incremental_id",incrementalID);
-        configHandler.saveConfig(cfg);
+
+    public int getNextID() {
+        return incrementalID++;
     }
 
     @Override
     public boolean deleteOre(int oreID) throws Exception {
-        //remove from config;
         deleteOreFromFile(oreID);
-        //remove from map
         ores.remove(oreID);
-        //remove from cache
-        OresCache.i().jakusunacoreidztychwszystkichtychtakich?
-        remove from cache;
-        remove from map;
-        return false;
+        // TODO: Remove from cache (if applicable)
+        return true;
     }
-    private void deleteOreFromFile(int id)throws Exception{
-        ConfigHandler configHandler = new ConfigHandler(RegenerativeOres.getPlugin(RegenerativeOres.class),"ores.yml");
-        FileConfiguration cfg = configHandler.getConfig();
-        cfg.set("ores."+id,null);
+
+    private void deleteOreFromFile(int id) throws Exception {
+        cfg.set("ores." + id, null);
         configHandler.saveConfig(cfg);
     }
 
-    public Optional<Ore> getOre(int id){
+    public Optional<Ore> getOre(int id) {
         return Optional.ofNullable(ores.get(id));
     }
-    public void load()throws Exception{
-        FileConfiguration cfg = new ConfigHandler(RegenerativeOres.getPlugin(RegenerativeOres.class),"ores.yml").getConfig();
-        incrementalID = cfg.getInt("incremental_id");
+
+    public void load() throws Exception {
+
+        incrementalID = cfg.getInt("incremental_id", 0);
         ConfigurationSection oresSection = cfg.getConfigurationSection("ores");
-        if(oresSection == null||oresSection.getKeys(false).isEmpty())return;
+
+        if (oresSection == null || oresSection.getKeys(false).isEmpty()) {
+            return;
+        }
+
         int oresLoaded = 0;
         for (String key : oresSection.getKeys(false)) {
             ConfigurationSection oreSection = oresSection.getConfigurationSection(key);
+
             if (oreSection != null) {
                 try {
-                    // Extract properties from the configuration
                     int id = oreSection.getInt("id");
                     int delay = oreSection.getInt("delay");
                     MiningBlock material = MiningBlockFactory.fromConfig(oreSection.getConfigurationSection("material"));
                     MiningBlock replacement = MiningBlockFactory.fromConfig(oreSection.getConfigurationSection("replacement"));
 
-                    Ore ore = new OreBuilder(id, delay, material, replacement)
-                            .withPermissionTest(PlayerTestsFactory.fromConfig(oreSection.getConfigurationSection("permissionTest")))
-                            .withToolTest(PlayerTestsFactory.fromConfig(oreSection.getConfigurationSection("toolTest")))
-                            .withMiningDrops( DropsFactory.dropsFromConfig(oreSection.getConfigurationSection("drops")))
-                            .withCommands( CommandsFactory.commandsFromConfig(oreSection.getConfigurationSection("commands")))
-                            .withMessage(MessagesFactory.deserialize(oreSection.getConfigurationSection("message")))
-                            .build();
+                    OreBuilder builder = new OreBuilder(id, delay, material, replacement);
+                    if(oreSection.getConfigurationSection("permissionTest") != null) {
+                        builder.withPermissionTest(PlayerTestsFactory.fromConfig(oreSection.getConfigurationSection("permissionTest")));
+                    }
+                    if(oreSection.getConfigurationSection("toolTest") != null) {
+                        builder.withToolTest(PlayerTestsFactory.fromConfig(oreSection.getConfigurationSection("toolTest")));
+                    }
+                    if(oreSection.getConfigurationSection("drops") != null) {
+                        builder.withMiningDrops(DropsFactory.dropsFromConfig(oreSection.getConfigurationSection("drops")));
+                    }
+                    if(oreSection.getConfigurationSection("commands") != null) {
+                        builder.withCommands(CommandsFactory.commandsFromConfig(oreSection.getConfigurationSection("commands")));
+                    }
+                    if(oreSection.getConfigurationSection("message") != null) {
+                        builder.withMessage(MessagesFactory.deserialize(oreSection.getConfigurationSection("message")));
+                    }
+                    Ore ore = builder.build();
 
                     registerOre(ore);
                     oresLoaded++;
                 } catch (Exception e) {
                     Bukkit.getLogger().warning("Failed to load ore: " + key);
+                    e.printStackTrace();
                 }
             }
         }
@@ -102,10 +109,12 @@ public class OresImpl implements Ores{
         Bukkit.getLogger().info(oresLoaded + " ores loaded.");
     }
 
-    /**
-     * Saves ore to config
-     */
-    public void saveOre(Ore ore) throws Exception{
-ewq
+    public void saveOre(Ore ore) throws Exception {
+        ConfigurationSection section = cfg.createSection("ores." + ore.getID());
+        ore.serialize(section);
+        if(cfg.getInt("incremental_id") <incrementalID) {
+            cfg.set("incremental_id", incrementalID);
+        }
+        configHandler.saveConfig(cfg);
     }
 }

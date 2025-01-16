@@ -26,6 +26,8 @@ public class Colors {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
+
+    public static ChatColor WHITE = ChatColor.WHITE;
     public static ChatColor GOLD = ChatColor.of("#FFD700");
     public static ChatColor SILVER = ChatColor.of("#C0C0C0");
     public static ChatColor BRONZE = ChatColor.of("#964B00");
@@ -37,6 +39,7 @@ public class Colors {
     public static ChatColor YELLOW_INFO = ChatColor.of("#FFE548");
     public static ChatColor GREEN_INFO = ChatColor.of("#7EE081");
     public static ChatColor INDIGO = ChatColor.of("#005377");
+    public static ChatColor TIFFANY_BLUE = ChatColor.of("#6ADCD1");
     public static ChatColor GREEN_JUNGLE = ChatColor.of("#06A77D");
     public static ChatColor CITRON = ChatColor.of("#D5C67A");
     public static ChatColor ADMIN_RED = ChatColor.of("#710000");
@@ -45,6 +48,10 @@ public class Colors {
     public static ChatColor CREAMY = ChatColor.of("#FBE8DA");
     public static ChatColor DARK_AQUA = ChatColor.DARK_AQUA;
     public static ChatColor BOLD = ChatColor.BOLD;
+    public static ChatColor ITALIC = ChatColor.ITALIC;
+    public static ChatColor MAGIC = ChatColor.MAGIC;
+    public static ChatColor STRIKETHROUGH = ChatColor.STRIKETHROUGH;
+    public static ChatColor UNDERLINE = ChatColor.UNDERLINE;
     public static ChatColor SUNSET = ChatColor.of("#F2C57C");
     public static ChatColor CAMBRIDGE_BLUE = ChatColor.of("#7FB685");
     public static ChatColor LAVENDER = ChatColor.of("#E5EAFA");

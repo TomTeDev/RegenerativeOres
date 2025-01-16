@@ -2,17 +2,16 @@ package more.mucho.regenerativeores;
 
 import more.mucho.regenerativeores.commands.BasicMessagesHandler;
 import more.mucho.regenerativeores.commands.CustomCommand;
-import more.mucho.regenerativeores.commands.MessagesHandler;
 import more.mucho.regenerativeores.commands.OresCommand;
-import more.mucho.regenerativeores.data.OresCache;
+import more.mucho.regenerativeores.data.OresCacheImpl;
 import more.mucho.regenerativeores.items.LoreNodeRegistry;
 import more.mucho.regenerativeores.listeners.BlockBreakListener;
 import more.mucho.regenerativeores.listeners.GuiListener;
+import more.mucho.regenerativeores.listeners.WandListener;
 import more.mucho.regenerativeores.workloads.WorkloadThread;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,8 +33,9 @@ public final class RegenerativeOres extends JavaPlugin {
         setupOresCache();
         registerListeners(
                 new GuiListener(),
-                new BlockBreakListener(OresCache.i()),
-                new TestListener()
+                new BlockBreakListener(OresCacheImpl.i()),
+                new TestListener(),
+                new WandListener(this)
         );
         registerCommands(
                 new OresCommand(new BasicMessagesHandler(), "ores")
@@ -52,7 +52,7 @@ public final class RegenerativeOres extends JavaPlugin {
         regenerator.disable();
         regenerator = null;
         stopWorkload();
-        OresCache.i().clear();
+        OresCacheImpl.i().clear();
         ores = null;
     }
 
@@ -80,7 +80,12 @@ public final class RegenerativeOres extends JavaPlugin {
     private void setupOresCache() {
         for (World world : Bukkit.getWorlds()) {
             for (Chunk chunk : world.getLoadedChunks()) {
-                OresCache.i().loadChunkOresAsync(world, chunk.getX(), chunk.getZ());
+                try {
+                    OresCacheImpl.i().loadChunkOresAsync(world, chunk.getX(), chunk.getZ());
+                }catch (Exception exception){
+                    Bukkit.getLogger().severe("Unable to load ores cache for chunk at X: "+chunk.getX()+" Z: "+chunk.getZ()+" in world "+chunk.getWorld().getName());
+                    exception.printStackTrace();
+                }
             }
         }
     }
@@ -114,11 +119,12 @@ public final class RegenerativeOres extends JavaPlugin {
     }
 
     private void loadOres() {
-        ores = new OresImpl();
         try {
+            ores = new OresImpl();
             ores.load();
             //TODO change this
         }catch (Exception e){
+            Bukkit.getLogger().severe("Unable to load ores!");
             e.printStackTrace();
         }
     }

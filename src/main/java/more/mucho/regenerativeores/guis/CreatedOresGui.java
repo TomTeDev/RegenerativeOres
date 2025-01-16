@@ -9,8 +9,11 @@ import more.mucho.regenerativeores.guis.framework.InventoryButton;
 import more.mucho.regenerativeores.guis.framework.ModernBaseGui;
 import more.mucho.regenerativeores.items.ItemBuilder;
 import more.mucho.regenerativeores.utils.Colors;
+import more.mucho.regenerativeores.utils.OreItems;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -27,7 +30,7 @@ public class CreatedOresGui extends ModernBaseGui {
             19, 20, 21, 22, 23, 24, 25,
     };
     public CreatedOresGui(){
-        super("Created ores",27);
+        super("Created ores",36);
     }
 
     @Override
@@ -37,11 +40,14 @@ public class CreatedOresGui extends ModernBaseGui {
 
     @Override
     public void decorate(Player player){
-        List<Ore> ores = RegenerativeOres.getPlugin(RegenerativeOres.class).getOres().getOres();
-        insertOres(ores);
         removeButton(getSize()-1);
         removeButton(getSize()-9);
+        for(int oreSlot : oresSlots){
+            removeButton(oreSlot);
+        }
 
+        List<Ore> ores = RegenerativeOres.getPlugin(RegenerativeOres.class).getOres().getOres();
+        insertOres(ores);
         if(page>0){
             addButton(getSize()-9, new InventoryButton()
                     .creator(who -> {
@@ -72,18 +78,21 @@ public class CreatedOresGui extends ModernBaseGui {
         super.decorate(player);
     }
 
-    private void insertOres(List<Ore>oresList){
+    private void insertOres(List<Ore>oresArray){
         for(int i = 0;i<oresSlots.length;i++){
-            if(page*oresSlots.length+i>=oresList.size())break;
-            int finalIndex = i;
+            int oreIndex = page*oresSlots.length+i;
+            if(oreIndex>=oresArray.size())break;
+
             addButton(oresSlots[i], new InventoryButton()
                     .creator(who -> {
-                        Ore ore = oresList.get(page*oresSlots.length+finalIndex);
+                        //if(oreIndex>=oresArray.size())return new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
+                        Ore ore = oresArray.get(oreIndex);
                         return new ItemBuilder(ore.getMaterial().asItem())
                                 .setDisplayName(Colors.SALMON+"Ore ID: "+ore.getID())
                                 .setLore(
                                         "",
                                         Colors.DARK_AQUA+ "LEFT CLICK"+Colors.LIGHT_PINK_GRAY+" to edit",
+                                        Colors.DARK_AQUA+ "MIDDLE CLICK"+Colors.LIGHT_PINK_GRAY+" to obtain a wand",
                                         Colors.DARK_AQUA+ "RIGHT CLICK + SHIFT"+Colors.LIGHT_PINK_GRAY+" to remove"
                                 )
                                 .addTag(ItemTags.ID,ore.getID())
@@ -102,22 +111,44 @@ public class CreatedOresGui extends ModernBaseGui {
                             closeInventory(whoClicked);
                             return;
                         }
+                        if(event.getClick() == ClickType.MIDDLE){
+                            giveOreWand(whoClicked,ore.get());
+                            return;
+                        }
                         if(event.getClick().isLeftClick()){
                             openOreEditor(whoClicked,ore.get());
                             return;
                         }
                         if(event.getClick().isRightClick()&&event.getClick().isShiftClick()){
-                            boolean deleted = ores.deleteOre(oreID);
-                            if(!deleted){
-                                whoClicked.sendMessage(Colors.RED_INFO+"Something went wrong");
-                                return;
+                            try {
+                                boolean deleted = ores.deleteOre(oreID);
+                                if(!deleted){
+                                    whoClicked.sendMessage(Colors.RED_INFO+"Something went wrong");
+                                    closeInventory(whoClicked);
+                                    return;
+                                }
+                                whoClicked.sendMessage(Colors.GREEN_INFO+"Deleted ore with ID: "+oreID);
+                                open(whoClicked);
+                            }catch (Exception exception){
+                                whoClicked.sendMessage(Colors.RED_INFO+"Something went wrong!");
+                                closeInventory(whoClicked);
+                                exception.printStackTrace();
                             }
-                            whoClicked.sendMessage(Colors.GREEN_INFO+"Deleted ore with ID: "+oreID);
-                            open(whoClicked);
+
                         }
                     })
             );
         }
+    }
+
+    private void giveOreWand(Player player,Ore ore){
+        ItemStack wand = OreItems.getOreWand(ore.getID());
+        if(player.getInventory().firstEmpty()<0){
+            player.sendMessage(Colors.RED_INFO+"Your inventory is full");
+            return;
+        }
+        player.getInventory().addItem(wand);
+        player.sendMessage(Colors.GREEN_INFO+"Wand obtained!");
     }
     @Override
     protected void design() {
@@ -125,7 +156,7 @@ public class CreatedOresGui extends ModernBaseGui {
     }
 
     private void openOreEditor(Player player,Ore ore){
-
+        //TODO open editor;
     }
 
 }

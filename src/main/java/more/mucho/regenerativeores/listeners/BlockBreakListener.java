@@ -1,6 +1,6 @@
 package more.mucho.regenerativeores.listeners;
 
-import more.mucho.regenerativeores.data.OresCache;
+import more.mucho.regenerativeores.data.OresCacheImpl;
 import more.mucho.regenerativeores.guis.OreGui;
 import more.mucho.regenerativeores.ores.Ore;
 import org.bukkit.Material;
@@ -13,8 +13,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.Optional;
 
 public class BlockBreakListener implements Listener {
-    private final OresCache oresCache;
-    public BlockBreakListener(OresCache oresCache) {
+    private final OresCacheImpl oresCache;
+    public BlockBreakListener(OresCacheImpl oresCache) {
         this.oresCache = oresCache;
     }
     @EventHandler

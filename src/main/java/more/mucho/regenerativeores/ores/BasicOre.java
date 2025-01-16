@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,21 +118,17 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
             // Serialize MiningBlock material and replacement
             ConfigurationSection materialSection = section.createSection("material");
             material.serialize(materialSection);
-
             ConfigurationSection replacementSection = section.createSection("replacement");
             replacement.serialize(replacementSection);
-
             // Serialize optional permissionTest and toolTest
             if (permissionTest != null) {
                 ConfigurationSection permissionSection = section.createSection("permissionTest");
                 permissionTest.serialize(permissionSection);
             }
-
             if (toolTest != null) {
                 ConfigurationSection toolSection = section.createSection("toolTest");
                 toolTest.serialize(toolSection);
             }
-
             // Serialize drops
             if (!drops.isEmpty()) {
                 ConfigurationSection dropsSection = section.createSection("drops");
@@ -151,13 +148,11 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
                     command.serialize(commandSection);
                 }
             }
-
             // Serialize message
             if (message != null) {
                 ConfigurationSection messageSection = section.createSection("message");
                 message.serialize(messageSection);
             }
-
             return true;
         } catch (Exception e) {
             Bukkit.getLogger().severe("Failed to serialize BasicOre: " + e.getMessage());

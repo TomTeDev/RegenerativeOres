@@ -1,21 +1,23 @@
 package more.mucho.regenerativeores.utils;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class LocationUtils {
 
-    private static final Map<Location, String> chunkKeyCache = new HashMap<>();
+
     private static final Map<Location, String> oreKeyCache = new HashMap<>();
 
     public static String getChunkKey(Location location) {
-        return chunkKeyCache.computeIfAbsent(location, loc -> {
-            int chunkX = loc.getBlockX() >> 4;
-            int chunkZ = loc.getBlockZ() >> 4;
-            return loc.getWorld().getName() + "," + chunkX + "," + chunkZ;
-        });
+        int chunkX = location.getBlockX() >> 4;
+        int chunkZ = location.getBlockZ() >> 4;
+        return getChunkKey(location.getWorld(),chunkX,chunkZ);
+    }
+    public static String getChunkKey(World world,int chunkX,int chunkZ) {
+        return world.getName() + "," + chunkX + "," + chunkZ;
     }
 
     public static String getOreKey(Location location) {

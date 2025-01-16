@@ -3,6 +3,7 @@ package more.mucho.regenerativeores.data;
 import org.bukkit.Location;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Optional;
 
 import static more.mucho.regenerativeores.utils.LocationUtils.getOreKey;
@@ -20,6 +21,14 @@ public class ChunkOreCache {
         this.ores = new HashMap<>();
     }
 
+    public HashSet<String> getOresLocations(int oreID){
+        HashSet<String> oreLocations = new HashSet<>();
+        ores.forEach((key, value) -> {
+            if(value == oreID)oreLocations.add(key);
+        });
+        return oreLocations;
+    }
+
     public ChunkOreCache(String worldName, int chunkX, int chunkZ, HashMap<String, Integer> ores) {
         this.worldName = worldName;
         this.chunkX = chunkX;
@@ -33,7 +42,11 @@ public class ChunkOreCache {
 
 
     public void addOre(Location location, int oreID) {
-        ores.put(getOreKey(location), oreID);
+        addOre(getOreKey(location),oreID);
+
+    }
+    public void addOre(String key,int oreID){
+        ores.put(key, oreID);
     }
 
     public void removeOre(Location location) {

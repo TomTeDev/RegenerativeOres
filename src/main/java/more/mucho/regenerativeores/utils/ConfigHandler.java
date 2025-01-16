@@ -25,6 +25,7 @@ public class ConfigHandler {
         this.plugin = plugin;
         this.fileName = fileName;
         this.parentFolder = parentFolder;
+        this.parentFolder.mkdirs();
         //Create File
         saveDeafaultConfig();
         this.fileConfig = YamlConfiguration.loadConfiguration(this.file);
