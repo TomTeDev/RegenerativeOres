@@ -64,7 +64,7 @@ public class BasicOre implements Ore, PermissionTestable, ToolTestable, Droppabl
 
     @Override
     public boolean mine(Player miner,Location location) {
-        if(!material.matchesType(location.getBlock()))return false;
+        //if(!material.matchesType(location.getBlock()))return false;
         OreMineEvent event = new OreMineEvent(miner,this,location);
         Bukkit.getPluginManager().callEvent(event);
         if(event.isCancelled())return false;

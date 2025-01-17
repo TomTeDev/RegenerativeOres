@@ -1,6 +1,7 @@
 package more.mucho.regenerativeores.commands;
 
 import more.mucho.regenerativeores.guis.CreatedOresGui;
+import more.mucho.regenerativeores.utils.OreItems;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ public class OresCommand extends AbstractCommand {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player player))return false;
         new CreatedOresGui().open(player);
+        player.getInventory().addItem(OreItems.getOresEditor());
         return false;
     }
 

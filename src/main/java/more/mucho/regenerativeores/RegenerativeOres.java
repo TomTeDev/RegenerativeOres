@@ -10,7 +10,7 @@ import more.mucho.regenerativeores.items.LoreNodeRegistry;
 import more.mucho.regenerativeores.listeners.BlockBreakListener;
 import more.mucho.regenerativeores.listeners.ChunksListener;
 import more.mucho.regenerativeores.listeners.GuiListener;
-import more.mucho.regenerativeores.listeners.WandListener;
+import more.mucho.regenerativeores.listeners.ItemsListener;
 import more.mucho.regenerativeores.workloads.WorkloadThread;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -41,7 +41,7 @@ public final class RegenerativeOres extends JavaPlugin {
                 new GuiListener(),
                 new BlockBreakListener(oresService),
                 new TestListener(this),
-                new WandListener(oresService),
+                new ItemsListener(oresService),
                 new ChunksListener(oresService)
         );
         registerCommands(
