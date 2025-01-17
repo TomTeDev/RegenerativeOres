@@ -1,6 +1,7 @@
 package more.mucho.regenerativeores;
 
-import more.mucho.regenerativeores.data.OresCacheImpl;
+import more.mucho.regenerativeores.data.Ores;
+import more.mucho.regenerativeores.data.OresService;
 import more.mucho.regenerativeores.ores.BasicOre;
 import more.mucho.regenerativeores.ores.Ore;
 import more.mucho.regenerativeores.ores.Range;
@@ -27,7 +28,10 @@ import java.util.Arrays;
 
 public class TestListener implements Listener {
 
-
+    public RegenerativeOres plugin;
+    public TestListener(RegenerativeOres plugin){
+        this.plugin = plugin;
+    }
 
 
     @EventHandler
@@ -41,8 +45,9 @@ public class TestListener implements Listener {
             exception.printStackTrace();
         }
         assert profile != null;
+        OresService oresService = plugin.getOresService();
 
-        Ores ores = RegenerativeOres.getPlugin(RegenerativeOres.class).getOres();
+        Ores ores = oresService.getOres();
         int incrementalID = ores.getNextID();
         Bukkit.broadcastMessage("Next ID: " + incrementalID);
         Ore ore = new BasicOre(incrementalID, 5,
@@ -60,12 +65,10 @@ public class TestListener implements Listener {
         ore.regen(location);
 
         try {
-            OresCacheImpl.i().addOre(location, ore);
-            OresCacheImpl.i().saveOreLocations(location,ore.getID());
-
-
             ores.registerOre(ore);
             ores.saveOre(ore);
+            oresService.addOre(location,ore.getID());
+
         }catch (Exception exception){
             exception.printStackTrace();
         }

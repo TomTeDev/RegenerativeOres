@@ -1,8 +1,7 @@
-package more.mucho.regenerativeores;
+package more.mucho.regenerativeores.data;
 
 import more.mucho.regenerativeores.ores.Ore;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

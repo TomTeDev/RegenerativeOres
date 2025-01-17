@@ -1,7 +1,6 @@
 package more.mucho.regenerativeores.guis;
 
-import more.mucho.regenerativeores.Ores;
-import more.mucho.regenerativeores.OresImpl;
+import more.mucho.regenerativeores.data.Ores;
 import more.mucho.regenerativeores.RegenerativeOres;
 import more.mucho.regenerativeores.items.ItemTags;
 import more.mucho.regenerativeores.ores.Ore;
@@ -10,7 +9,6 @@ import more.mucho.regenerativeores.guis.framework.ModernBaseGui;
 import more.mucho.regenerativeores.items.ItemBuilder;
 import more.mucho.regenerativeores.utils.Colors;
 import more.mucho.regenerativeores.utils.OreItems;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -18,8 +16,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import javax.swing.text.html.Option;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +42,7 @@ public class CreatedOresGui extends ModernBaseGui {
             removeButton(oreSlot);
         }
 
-        List<Ore> ores = RegenerativeOres.getPlugin(RegenerativeOres.class).getOres().getOres();
+        List<Ore> ores = RegenerativeOres.getPlugin(RegenerativeOres.class).getOresService().getOres().getOres();
         insertOres(ores);
         if(page>0){
             addButton(getSize()-9, new InventoryButton()
@@ -104,7 +100,7 @@ public class CreatedOresGui extends ModernBaseGui {
                         if(currentItem == null||currentItem.getType().isAir())return;
                         int oreID = new ItemBuilder(currentItem).getTagOrDefault(ItemTags.ID, PersistentDataType.INTEGER,-1);
                         if(oreID<0)return;
-                        Ores ores = RegenerativeOres.getPlugin(RegenerativeOres.class).getOres();
+                        Ores ores = RegenerativeOres.getPlugin(RegenerativeOres.class).getOresService().getOres();
                         Optional<Ore> ore = ores.getOre(oreID);
                         if(ore.isEmpty()){
                             whoClicked.sendMessage(Colors.RED_INFO+"Unable to find ore with ID: "+oreID);

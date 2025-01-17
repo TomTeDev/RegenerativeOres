@@ -1,6 +1,7 @@
 package more.mucho.regenerativeores.listeners;
 
 import more.mucho.regenerativeores.data.OresCacheImpl;
+import more.mucho.regenerativeores.data.OresService;
 import more.mucho.regenerativeores.guis.OreGui;
 import more.mucho.regenerativeores.ores.Ore;
 import org.bukkit.Material;
@@ -13,14 +14,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.Optional;
 
 public class BlockBreakListener implements Listener {
-    private final OresCacheImpl oresCache;
-    public BlockBreakListener(OresCacheImpl oresCache) {
-        this.oresCache = oresCache;
+    private final OresService oresService;
+    public BlockBreakListener(OresService oresService) {
+        this.oresService = oresService;
     }
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
         if(event.isCancelled())return;
-        Optional<Ore> ore = oresCache.getOre(event.getBlock().getLocation());
+        Optional<Ore> ore = oresService.getOre(event.getBlock().getLocation());
         if(ore.isEmpty())return;
         event.setCancelled(true);
         boolean mined = ore.get().mine(event.getPlayer(),event.getBlock().getLocation());

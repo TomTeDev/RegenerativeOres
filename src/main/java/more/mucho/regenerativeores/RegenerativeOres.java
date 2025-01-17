@@ -4,8 +4,11 @@ import more.mucho.regenerativeores.commands.BasicMessagesHandler;
 import more.mucho.regenerativeores.commands.CustomCommand;
 import more.mucho.regenerativeores.commands.OresCommand;
 import more.mucho.regenerativeores.data.OresCacheImpl;
+import more.mucho.regenerativeores.data.OresImpl;
+import more.mucho.regenerativeores.data.OresService;
 import more.mucho.regenerativeores.items.LoreNodeRegistry;
 import more.mucho.regenerativeores.listeners.BlockBreakListener;
+import more.mucho.regenerativeores.listeners.ChunksListener;
 import more.mucho.regenerativeores.listeners.GuiListener;
 import more.mucho.regenerativeores.listeners.WandListener;
 import more.mucho.regenerativeores.workloads.WorkloadThread;
@@ -23,19 +26,23 @@ public final class RegenerativeOres extends JavaPlugin {
     private WorkloadThread workloadThread = null;
     private BukkitTask workloadTask = null;
     private RegeneratorImpl regenerator = null;
+    private OresService oresService;
     private OresImpl ores = null;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         loadOres();
+        oresService = new OresService(this, ores, new OresCacheImpl());
         startWorkload();
-        setupOresCache();
+        loadExistingChunksToCache();
+
         registerListeners(
                 new GuiListener(),
-                new BlockBreakListener(OresCacheImpl.i()),
-                new TestListener(),
-                new WandListener(this)
+                new BlockBreakListener(oresService),
+                new TestListener(this),
+                new WandListener(oresService),
+                new ChunksListener(oresService)
         );
         registerCommands(
                 new OresCommand(new BasicMessagesHandler(), "ores")
@@ -52,8 +59,9 @@ public final class RegenerativeOres extends JavaPlugin {
         regenerator.disable();
         regenerator = null;
         stopWorkload();
-        OresCacheImpl.i().clear();
+        oresService.cache.clear();
         ores = null;
+        oresService = null;
     }
 
     private void stopWorkload() {
@@ -77,13 +85,13 @@ public final class RegenerativeOres extends JavaPlugin {
         return workloadThread;
     }
 
-    private void setupOresCache() {
+    private void loadExistingChunksToCache() {
         for (World world : Bukkit.getWorlds()) {
             for (Chunk chunk : world.getLoadedChunks()) {
                 try {
-                    OresCacheImpl.i().loadChunkOresAsync(world, chunk.getX(), chunk.getZ());
-                }catch (Exception exception){
-                    Bukkit.getLogger().severe("Unable to load ores cache for chunk at X: "+chunk.getX()+" Z: "+chunk.getZ()+" in world "+chunk.getWorld().getName());
+                    oresService.addChunkToCache(chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
+                } catch (Exception exception) {
+                    Bukkit.getLogger().severe("Unable to load ores cache for chunk at X: " + chunk.getX() + " Z: " + chunk.getZ() + " in world " + chunk.getWorld().getName());
                     exception.printStackTrace();
                 }
             }
@@ -114,19 +122,20 @@ public final class RegenerativeOres extends JavaPlugin {
         return regenerator;
     }
 
-    public Ores getOres() {
-        return ores;
-    }
 
     private void loadOres() {
         try {
             ores = new OresImpl();
             ores.load();
             //TODO change this
-        }catch (Exception e){
+        } catch (Exception e) {
             Bukkit.getLogger().severe("Unable to load ores!");
             e.printStackTrace();
         }
+    }
+
+    public OresService getOresService() {
+        return oresService;
     }
 
 

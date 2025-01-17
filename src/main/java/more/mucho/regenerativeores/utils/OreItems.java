@@ -14,7 +14,7 @@ public class OreItems {
         return new ItemBuilder(Material.BARREL).setDisplayName(Colors.TIFFANY_BLUE+"Magical Ore Wand")
                 .setLore(
                         "",
-                        Colors.GREEN_INFO + "[!]Used to place ores",
+                        Colors.GREEN_INFO + "[!]Used to create ores",
                         Colors.WHITE + "Refers id: " + oreID,
                         Colors.RANK_GRAY + "" + Colors.ITALIC + "\"Just place it\""
                 )

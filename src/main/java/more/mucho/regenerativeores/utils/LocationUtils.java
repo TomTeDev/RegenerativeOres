@@ -17,7 +17,10 @@ public class LocationUtils {
         return getChunkKey(location.getWorld(),chunkX,chunkZ);
     }
     public static String getChunkKey(World world,int chunkX,int chunkZ) {
-        return world.getName() + "," + chunkX + "," + chunkZ;
+       return getChunkKey(world.getName().toLowerCase(),chunkX,chunkZ);
+    }
+    public static String getChunkKey(String worldName,int chunkX,int chunkZ) {
+        return worldName.toLowerCase() + "," + chunkX + "," + chunkZ;
     }
 
     public static String getOreKey(Location location) {

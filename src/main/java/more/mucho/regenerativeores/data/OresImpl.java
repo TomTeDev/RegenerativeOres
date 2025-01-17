@@ -1,6 +1,7 @@
-package more.mucho.regenerativeores;
+package more.mucho.regenerativeores.data;
 
 import com.google.common.base.Preconditions;
+import more.mucho.regenerativeores.RegenerativeOres;
 import more.mucho.regenerativeores.ores.Ore;
 import more.mucho.regenerativeores.ores.OreBuilder;
 import more.mucho.regenerativeores.ores.commands.CommandsFactory;
