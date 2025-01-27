@@ -38,6 +38,7 @@ public class ErrorGui extends ModernBaseGui {
     @Override
     public void onClose(InventoryCloseEvent event) {
         goBackGui.open(event.getPlayer());
+
     }
 
     @Override
