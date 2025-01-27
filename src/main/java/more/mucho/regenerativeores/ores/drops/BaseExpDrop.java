@@ -15,6 +15,7 @@ public class BaseExpDrop extends BaseDrop {
         super(range, dropChance, isDirect, message);
     }
 
+
     @Override
     public void drop(Player target, Location dropLocation) {
         int exp = getRandomDropAmount();

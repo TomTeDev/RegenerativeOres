@@ -17,7 +17,17 @@ public class OresCommand extends AbstractCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player player))return false;
-        new CreatedOresGui().open(player);
+        if(args.length==0){
+            new CreatedOresGui().open(player);
+            return true;
+        }
+        switch (args[0].toLowerCase()){
+            case "create"->{
+
+                return true;
+            }
+        }
+
         player.getInventory().addItem(OreItems.getOresEditor());
         return false;
     }

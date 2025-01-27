@@ -3,8 +3,10 @@ package more.mucho.regenerativeores.ores;
 import more.mucho.regenerativeores.ores.commands.MiningCommand;
 import more.mucho.regenerativeores.ores.drops.MiningDrop;
 
+import more.mucho.regenerativeores.ores.mining_blocks.MaterialMiningBlock;
 import more.mucho.regenerativeores.ores.mining_blocks.MiningBlock;
 import more.mucho.regenerativeores.ores.player_test.PlayerTest;
+import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +14,8 @@ import java.util.List;
 public class OreBuilder {
     private int id;
     private final int delay;
-    private final MiningBlock material;
-    private final MiningBlock replacement;
+    private MiningBlock material;
+    private MiningBlock replacement;
     private PlayerTest permissionTest = null;
     private PlayerTest toolTest = null;
     private List<MiningDrop> drops = new ArrayList<>();
@@ -69,6 +71,15 @@ public class OreBuilder {
         return this;
     }
 
+    public OreBuilder setMaterial(Material material){
+        this.material = new MaterialMiningBlock(material);
+        return this;
+    }
+
+
+    public List<MiningDrop> getDrops(){
+        return this.drops;
+    }
 
 
     // Build method

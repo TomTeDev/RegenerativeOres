@@ -5,6 +5,7 @@ import more.mucho.regenerativeores.items.ItemBuilder;
 import more.mucho.regenerativeores.utils.Colors;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -50,20 +51,40 @@ public abstract class ModernBaseGui implements GUI {
     public int getSize() {
         return this.size;
     }
-    public void open(Player player){
+
+    public void open(Player player) {
+        if(!player.isOnline())return;
         openInventory(player, getInventory());
     }
+
+    public void open(HumanEntity humanEntity) {
+        if (humanEntity instanceof Player player) {
+            open(player);
+        }
+    }
+    public void clearButtons(){
+        for(int i = 0;i<getSize();i++){
+            removeButton(i);
+        }
+    }
+
     public void addButton(int slot, InventoryButton button) {
         this.buttonMap.put(slot, button);
     }
 
-    public void removeButton(int slot){
+    public void removeButton(int slot) {
         this.buttonMap.remove(slot);
     }
 
     protected void addGoBackButton(int slot, Inventory inventory) {
         addButton(slot, new InventoryButton().creator((player1) -> new ItemBuilder(Material.SPECTRAL_ARROW).setDisplayName(Colors.LAVENDER + "Go back").build()).consumer((event) -> {
             openInventory((Player) event.getWhoClicked(), inventory);
+        }));
+    }
+
+    protected void addGoBackButton(int slot, GUI gui) {
+        addButton(slot, new InventoryButton().creator((player1) -> new ItemBuilder(Material.SPECTRAL_ARROW).setDisplayName(Colors.LAVENDER + "Go back").build()).consumer((event) -> {
+            gui.open((Player) event.getWhoClicked());
         }));
     }
 

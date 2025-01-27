@@ -6,6 +6,7 @@ import more.mucho.regenerativeores.ores.Range;
 import more.mucho.regenerativeores.ores.messages.MessagesFactory;
 import more.mucho.regenerativeores.utils.Random;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -15,16 +16,18 @@ public abstract class BaseDrop implements MiningDrop {
     protected final Range<Integer, Integer> range;
     protected final int dropChance;
     protected final boolean isDirect;
+    private final Sound sound;
     @Nullable
     protected final MiningMessage message;
 
-    public BaseDrop(Range<Integer, Integer> range, int dropChance, boolean isDirect, MiningMessage message) {
+    public BaseDrop(Range<Integer, Integer> range, int dropChance, boolean isDirect, Sound sound, MiningMessage message) {
         Preconditions.checkArgument(range.min <= range.max, "minAmount must be less than maxAmount");
         Preconditions.checkArgument(range.min > 0, "minAmount must be greater than 0");
 
         this.range = range;
         this.dropChance = dropChance;
         this.isDirect = isDirect;
+        this.sound = sound;
         this.message = message;
     }
 
@@ -37,6 +40,10 @@ public abstract class BaseDrop implements MiningDrop {
             message.send(target);
         }
     }
+    public void playSound(Player player){
+        if(sound == null)return;
+        player.playSound(player, sound, 1, 1);
+    }
     public void sendMessage(Player target) {
         if (message == null) return;
         message.send(target);
@@ -44,12 +51,27 @@ public abstract class BaseDrop implements MiningDrop {
     public int getRandomDropAmount() {
         return Random.randomInt(range.min, range.max);
     }
+    public Range<Integer,Integer> getRange(){
+        return range;
+    }
+    public int getDropChance(){
+        return dropChance;
+    }
+    public boolean isDirect(){
+        return isDirect;
+    }
+    public MiningMessage getMessage(){
+        return message;
+    }
     public void serialize(ConfigurationSection section){
         if (section == null) throw new IllegalArgumentException("Section is null");
         section.set("rangeMin", range.min);
         section.set("rangeMax", range.max);
         section.set("dropChance", dropChance);
         section.set("isDirect", isDirect);
+        if(sound!=null){
+            section.set("sound", sound.name());
+        }
         if (message != null){
             ConfigurationSection messageSection = section.createSection("message");
             message.serialize(messageSection);
@@ -72,7 +94,11 @@ public abstract class BaseDrop implements MiningDrop {
             }
         }
 
-        return new BaseDrop(range, dropChance, isDirect, message) {
+        Sound sound = null;
+        if(section.getString("sound")!=null){
+            sound = Sound.valueOf(section.getString("sound"));
+        }
+        return new BaseDrop(range, dropChance, isDirect,sound, message) {
 
             @Override
             public boolean testDrop() {

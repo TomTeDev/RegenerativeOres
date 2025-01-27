@@ -26,6 +26,9 @@ public class BaseItemDrop extends BaseDrop{
         this.sound = sound;
         this.particle = particle;
     }
+    public ItemStack getItem(){
+        return item.clone();
+    }
 
     private ItemStack getDrop(){
         ItemStack clone = item.clone();

@@ -2,6 +2,7 @@ package more.mucho.regenerativeores.guis;
 
 import de.rapha149.signgui.SignGUI;
 import de.rapha149.signgui.SignGUIAction;
+import more.mucho.regenerativeores.guis.framework.GUI;
 import more.mucho.regenerativeores.guis.framework.InventoryButton;
 import more.mucho.regenerativeores.guis.framework.ModernBaseGui;
 import more.mucho.regenerativeores.items.ItemBuilder;
@@ -28,15 +29,15 @@ public class SelectiveGui extends ModernBaseGui {
             };
 
     private final Consumer<Material> consumer;
-    private final Inventory goBackInventory;
+    private final GUI goBackGui;
     private boolean allowClose = false;
     private String queriedBlockType = null;
     private int page = 0;
 
-    public SelectiveGui(Consumer<Material> consumer, Inventory goBackInventory) {
+    public SelectiveGui(Consumer<Material> consumer, GUI goBackGui) {
         super("Select block", 54);
         this.consumer = consumer;
-        this.goBackInventory = goBackInventory;
+        this.goBackGui = goBackGui;
     }
 
     @Override
@@ -150,7 +151,7 @@ public class SelectiveGui extends ModernBaseGui {
     public void onClose(InventoryCloseEvent event) {
         Bukkit.broadcastMessage("Allow close: " + allowClose);
         if (allowClose) return;
-        openInventory((Player) event.getPlayer(), goBackInventory);
+        goBackGui.open((Player) event.getPlayer());
     }
 
     @Override
