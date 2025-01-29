@@ -1,4 +1,4 @@
-package more.mucho.regenerativeores.ores.drops;
+package more.mucho.regenerativeores.guis;
 
 import more.mucho.regenerativeores.guis.framework.GUI;
 import more.mucho.regenerativeores.guis.framework.InventoryButton;
@@ -38,7 +38,6 @@ public class ErrorGui extends ModernBaseGui {
     @Override
     public void onClose(InventoryCloseEvent event) {
         goBackGui.open(event.getPlayer());
-
     }
 
     @Override

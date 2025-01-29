@@ -6,8 +6,5 @@ import org.bukkit.entity.Player;
 
 public interface MiningDrop extends ConfigSerializable {
     boolean testDrop();
-
     void drop(Player player, Location dropLocation);
-
-
 }

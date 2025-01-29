@@ -15,16 +15,11 @@ import java.util.HashMap;
 
 public class BaseItemDrop extends BaseDrop{
     private final ItemStack item;
-    @Nullable
-    private final Sound sound;
-    @Nullable
-    private final Particle particle;
-    public BaseItemDrop(Range<Integer, Integer> range, int dropChance, boolean isDirect, MiningMessage message, ItemStack item, Sound sound, Particle particle) {
-        super(range, dropChance, isDirect, message);
+
+    public BaseItemDrop(Range<Integer, Integer> range, int dropChance, boolean isDirect, MiningMessage message, ItemStack item, Sound sound) {
+        super(range, dropChance, isDirect,sound, message);
         Preconditions.checkArgument(range.max <= item.getMaxStackSize(), "maxAmount must be less than or equal to item max stack size");
         this.item = item.clone();
-        this.sound = sound;
-        this.particle = particle;
     }
     public ItemStack getItem(){
         return item.clone();
@@ -56,9 +51,6 @@ public class BaseItemDrop extends BaseDrop{
         if (sound != null) {
             player.getWorld().playSound(player, sound, 1, 1);
         }
-        if (particle != null) {
-            player.getWorld().spawnParticle(particle, dropLocation, 1);
-        }
     }
 
     @Override
@@ -70,9 +62,7 @@ public class BaseItemDrop extends BaseDrop{
         if (sound != null) {
             section.set("sound", sound.name());
         }
-        if (particle != null) {
-            section.set("particle", particle.name());
-        }
+
     }
     public static BaseItemDrop deserialize(ConfigurationSection section) {
         if(section == null){
@@ -89,13 +79,8 @@ public class BaseItemDrop extends BaseDrop{
         if(soundName!=null){
              sound = Sound.valueOf(soundName);
         }
-        String particleName = section.getString("particle");
-        Particle particle = null;
-        if(particleName!=null){
-             particle = Particle.valueOf(particleName);
-        }
 
-        return new BaseItemDrop(baseDrop.range, baseDrop.dropChance, baseDrop.isDirect, baseDrop.message, item, sound, particle);
+        return new BaseItemDrop(baseDrop.range, baseDrop.dropChance, baseDrop.isDirect, baseDrop.message, item, sound);
     }
 
 }

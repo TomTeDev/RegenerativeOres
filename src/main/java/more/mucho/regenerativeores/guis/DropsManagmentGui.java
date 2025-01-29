@@ -1,5 +1,6 @@
 package more.mucho.regenerativeores.guis;
 
+import more.mucho.regenerativeores.guis.drop.ExpDropEditGui;
 import more.mucho.regenerativeores.guis.framework.GUI;
 import more.mucho.regenerativeores.guis.framework.InventoryButton;
 import more.mucho.regenerativeores.guis.framework.ModernBaseGui;
@@ -16,7 +17,7 @@ public class DropsManagmentGui extends ModernBaseGui {
     private final GUI goBackGUI;;
     private final OreBuilder oreBuilder;
     private int page = 0;
-    private int[]dropSlots;
+    private final int[]dropSlots;
     public DropsManagmentGui(GUI goBackGUI, OreBuilder oreBuilder) {
         super("Manage drops", 36);
         this.goBackGUI = goBackGUI;
@@ -46,13 +47,20 @@ public class DropsManagmentGui extends ModernBaseGui {
                                     "Min value: " + expDrop.getRange().min,
                                     "Max value: " + expDrop.getRange().max,
                                     "Is direct: "+expDrop.isDirect(),
-                                    "Click to edit"
+                                    "Left click to edit",
+                                    "Shift click to remove"
                             )
                             .build();
                 })
                         .consumer(event->{
-                            new ExpDropEditGui().open();
-                            event.getWhoClicked().sendMessage("Click");
+                            if(event.getClick().isLeftClick()){
+                                new ExpDropEditGui().open(event.getWhoClicked());
+                                return;
+                            }
+                            if(event.getClick().isShiftClick()){
+                                delete drop;
+                            }
+
                         });
             }
             if(drop instanceof BaseItemDrop itemDrop){
@@ -80,6 +88,29 @@ public class DropsManagmentGui extends ModernBaseGui {
             index++;
             smallIndex++;
         }
+
+        addGoBackButton(getSize()-9,goBackGUI);
+
+        addButton(getSize()-5,new InventoryButton()
+                .creator(who->{
+                    return new ItemBuilder(Material.BOOKSHELF,"Item drop")
+                            .setLore("Click to create new item drop")
+                            .build();
+                })
+                .consumer(event->{
+                    open drop create gui;
+                })
+        );
+        addButton(getSize()-3,new InventoryButton()
+                .creator(who->{
+                    return new ItemBuilder(Material.EXPERIENCE_BOTTLE,"Exp drop")
+                            .setLore("Click to create new exp drop")
+                            .build();
+                })
+                .consumer(event->{
+                    open drop create gui;
+                })
+        );
 
         super.decorate(player);
     }

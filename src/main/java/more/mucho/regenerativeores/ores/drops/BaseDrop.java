@@ -16,7 +16,7 @@ public abstract class BaseDrop implements MiningDrop {
     protected final Range<Integer, Integer> range;
     protected final int dropChance;
     protected final boolean isDirect;
-    private final Sound sound;
+    protected final Sound sound;
     @Nullable
     protected final MiningMessage message;
 
