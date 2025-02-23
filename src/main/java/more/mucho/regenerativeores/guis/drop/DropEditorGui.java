@@ -4,19 +4,20 @@ import more.mucho.regenerativeores.guis.framework.InventoryButton;
 import more.mucho.regenerativeores.guis.framework.ModernBaseGui;
 import more.mucho.regenerativeores.items.ItemBuilder;
 import more.mucho.regenerativeores.ores.drops.builders.ExpDropBuilder;
+import more.mucho.regenerativeores.utils.Builders;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
-public class DropEditorGui extends ModernBaseGui {
-    private final ExpDropBuilder dropBuilder;
+import java.util.Optional;
 
-    public DropEditorGui(String title, int size, ExpDropBuilder dropBuilder) {
+public class DropEditorGui extends ModernBaseGui {
+    public DropEditorGui(String title, int size) {
         super(title, size);
-        this.dropBuilder = dropBuilder;
     }
 
     public void decorate(Player player) {
+        ExpDropBuilder dropBuilder = Builders.getOrCreateExpDropBuilder(player);
 
         addButton(1, new InventoryButton().creator(who -> {
                     return new ItemBuilder(Material.TARGET).setDisplayName("Set chance")
@@ -63,7 +64,7 @@ public class DropEditorGui extends ModernBaseGui {
                     return new ItemBuilder(Material.EMERALD).setDisplayName("Set min value")
                             .setLore(
                                     "",
-                                    "Current min value: " + dropBuilder.getMinValue()
+                                    "Current min value: " + dropBuilder.getMinAmount()
                             )
                             .build();
                 })

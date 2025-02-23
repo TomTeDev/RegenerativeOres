@@ -32,7 +32,7 @@ public class OreCreateGui extends ModernBaseGui {
                         })
         );
         addButton(2,new InventoryButton().creator(who->{
-            new ItemBuilder(Material.STICK,"Manage drops").build();
+           return new ItemBuilder(Material.STICK,"Manage drops").build();
         }).consumer(event -> {
             new DropsManagmentGui(this,oreBuilder).open(event.getWhoClicked());
         }));

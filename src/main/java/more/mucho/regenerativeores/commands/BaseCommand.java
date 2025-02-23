@@ -1,10 +1,10 @@
 package more.mucho.regenerativeores.commands;
 
-public abstract class AbstractCommand implements CustomCommand {
+public abstract class BaseCommand implements CustomCommand,MessagesHandler {
 
     private String[] commandNames;
 
-    public AbstractCommand(MessagesHandler messagesHandler, String... commandNames) {
+    public BaseCommand(String... commandNames) {
         this.commandNames = commandNames;
     }
 

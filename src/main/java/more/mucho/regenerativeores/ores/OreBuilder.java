@@ -35,8 +35,16 @@ public class OreBuilder {
         this.material = new MaterialMiningBlock(material);
         return this;
     }
+    public OreBuilder setMaterial(MiningBlock material){
+        this.material = material;
+        return this;
+    }
     public OreBuilder setReplacement(Material material){
         this.replacement = new MaterialMiningBlock(material);
+        return this;
+    }
+    public OreBuilder setReplacement(MiningBlock material){
+        this.replacement = material;
         return this;
     }
 

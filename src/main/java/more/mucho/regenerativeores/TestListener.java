@@ -56,8 +56,8 @@ public class TestListener implements Listener {
                 null,
                 new BasicToolTest(new ItemStack(Material.DIAMOND_PICKAXE), "Musisz miec diamond pikaks"),
                 Arrays.asList(
-                        new BaseItemDrop(Range.of(1, 5), 20, false, new BaseMiningMessage(DISPLAY_ACTION.ACTION_BAR, "Dropło!"), new ItemStack(Material.APPLE), Sound.BLOCK_NOTE_BLOCK_PLING, null),
-                        new BaseExpDrop(Range.of(1, 5), 20, false, new BaseMiningMessage(DISPLAY_ACTION.TITLE_SMALL, "Expisko!"))
+                        new BaseItemDrop(Range.of(1, 5), 20, false, new BaseMiningMessage(DISPLAY_ACTION.ACTION_BAR, "Dropło!"), Sound.BLOCK_NOTE_BLOCK_PLING, new ItemStack(Material.APPLE)),
+                        new BaseExpDrop(Range.of(1, 5), 20, false, new BaseMiningMessage(DISPLAY_ACTION.TITLE_SMALL, "Expisko!"),Sound.BLOCK_NOTE_BLOCK_PLING)
 
                 ), new BaseMiningMessage(DISPLAY_ACTION.CHAT, "Wykopano!"), Arrays.asList(new BaseMiningCommand(5, "give Muchomore APPLE 1"))
         );

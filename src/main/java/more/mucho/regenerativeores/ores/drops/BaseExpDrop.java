@@ -12,8 +12,8 @@ import org.bukkit.entity.Player;
 
 public class BaseExpDrop extends BaseDrop {
 
-    public BaseExpDrop(Range<Integer, Integer> range, int dropChance, boolean isDirect,Sound sound, MiningMessage message) {
-        super(range, dropChance, isDirect,sound, message);
+    public BaseExpDrop(Range<Integer, Integer> range, int dropChance, boolean isDirect,MiningMessage message,Sound sound) {
+        super(range, dropChance, isDirect,message,sound );
     }
 
     @Override
@@ -40,7 +40,7 @@ public class BaseExpDrop extends BaseDrop {
 
     public static BaseExpDrop deserialize(ConfigurationSection section) {
         BaseDrop baseDrop = BaseDrop.deserializeBaseDrop(section);  // Deserialize common fields
-        return new BaseExpDrop(baseDrop.range, baseDrop.dropChance, baseDrop.isDirect,baseDrop.sound, baseDrop.message);
+        return new BaseExpDrop(baseDrop.range, baseDrop.dropChance, baseDrop.isDirect,baseDrop.message,baseDrop.sound);
     }
 
 

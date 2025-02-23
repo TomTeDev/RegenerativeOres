@@ -35,7 +35,7 @@ public class DropsManagmentGui extends ModernBaseGui {
         int index = page*dropSlots.length;
         int smallIndex = 0;
         for(MiningDrop drop : oreBuilder.getDrops()){
-            aha
+
             int slot = dropSlots[smallIndex];
             InventoryButton button = null;
             if(drop instanceof BaseExpDrop expDrop){
@@ -58,7 +58,7 @@ public class DropsManagmentGui extends ModernBaseGui {
                                 return;
                             }
                             if(event.getClick().isShiftClick()){
-                                delete drop;
+                               //TODO delete drop;
                             }
 
                         });
@@ -98,7 +98,7 @@ public class DropsManagmentGui extends ModernBaseGui {
                             .build();
                 })
                 .consumer(event->{
-                    open drop create gui;
+                    //TODO open drop create gui;
                 })
         );
         addButton(getSize()-3,new InventoryButton()
@@ -108,7 +108,7 @@ public class DropsManagmentGui extends ModernBaseGui {
                             .build();
                 })
                 .consumer(event->{
-                    open drop create gui;
+                  //TODO  open drop create gui;
                 })
         );
 

@@ -58,7 +58,7 @@ public class OreGui extends ModernBaseGui {
                             material->{
                                 Bukkit.broadcastMessage("Selected material: "+material.name());
                             },
-                            getInventory()
+                            this
                     ).open(whoClicked);
                 })
 

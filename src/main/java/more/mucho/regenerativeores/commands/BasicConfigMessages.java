@@ -2,7 +2,7 @@ package more.mucho.regenerativeores.commands;
 
 import org.bukkit.command.CommandSender;
 
-public class BasicMessagesHandler implements MessagesHandler{
+public class BasicConfigMessages implements ConfigMessages{
     //TODO implement gui an use it as path;
     @Override
     public void senDirectMessage(CommandSender target, String message) {

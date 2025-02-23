@@ -1,6 +1,6 @@
 package more.mucho.regenerativeores;
 
-import more.mucho.regenerativeores.commands.BasicMessagesHandler;
+import more.mucho.regenerativeores.commands.BasicConfigMessages;
 import more.mucho.regenerativeores.commands.CustomCommand;
 import more.mucho.regenerativeores.commands.OresCommand;
 import more.mucho.regenerativeores.data.OresCacheImpl;
@@ -45,7 +45,7 @@ public final class RegenerativeOres extends JavaPlugin {
                 new ChunksListener(oresService)
         );
         registerCommands(
-                new OresCommand(new BasicMessagesHandler(), "ores")
+                new OresCommand()
         );
         regenerator = new RegeneratorImpl();
         regenerator.enable();

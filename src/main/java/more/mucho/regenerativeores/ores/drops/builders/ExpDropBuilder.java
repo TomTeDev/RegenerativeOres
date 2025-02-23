@@ -4,6 +4,10 @@ import more.mucho.regenerativeores.ores.Range;
 import more.mucho.regenerativeores.ores.drops.BaseExpDrop;
 
 public class ExpDropBuilder extends DropBuilder<BaseExpDrop> {
+
+    public static ExpDropBuilder builder() {
+        return new ExpDropBuilder();
+    }
     @Override
     public BaseExpDrop build() {
         return new BaseExpDrop(
@@ -12,6 +16,7 @@ public class ExpDropBuilder extends DropBuilder<BaseExpDrop> {
                 this.isDirect(),
                 this.getMessage(),
                 this.getSound()
+
         );
     }
 }

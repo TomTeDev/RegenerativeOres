@@ -58,8 +58,8 @@ public class ItemDropBuilder extends DropBuilder<BaseItemDrop> {
                 this.getChance(),
                 this.isDirect(),
                 this.getMessage(),
-                this.item.clone(), // Clone the item to ensure immutability
-                this.getSound()
+                this.getSound(),
+                this.item.clone()
         );
     }
 }

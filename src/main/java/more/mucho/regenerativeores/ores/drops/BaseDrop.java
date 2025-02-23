@@ -16,11 +16,11 @@ public abstract class BaseDrop implements MiningDrop {
     protected final Range<Integer, Integer> range;
     protected final int dropChance;
     protected final boolean isDirect;
-    protected final Sound sound;
-    @Nullable
     protected final MiningMessage message;
+    protected final Sound sound;
 
-    public BaseDrop(Range<Integer, Integer> range, int dropChance, boolean isDirect, Sound sound, MiningMessage message) {
+
+    public BaseDrop(Range<Integer, Integer> range, int dropChance, boolean isDirect, @Nullable MiningMessage message, @Nullable Sound sound) {
         Preconditions.checkArgument(range.min <= range.max, "minAmount must be less than maxAmount");
         Preconditions.checkArgument(range.min > 0, "minAmount must be greater than 0");
 
@@ -34,50 +34,60 @@ public abstract class BaseDrop implements MiningDrop {
     public boolean testDrop() {
         return Random.randomInt(100) < dropChance;
     }
+
     @Override
     public void drop(Player target, Location dropLocation) {
-        if(message!=null){
+        if (message != null) {
             message.send(target);
         }
     }
-    public void playSound(Player player){
-        if(sound == null)return;
+
+    public void playSound(Player player) {
+        if (sound == null) return;
         player.playSound(player, sound, 1, 1);
     }
+
     public void sendMessage(Player target) {
         if (message == null) return;
         message.send(target);
     }
+
     public int getRandomDropAmount() {
         return Random.randomInt(range.min, range.max);
     }
-    public Range<Integer,Integer> getRange(){
+
+    public Range<Integer, Integer> getRange() {
         return range;
     }
-    public int getDropChance(){
+
+    public int getDropChance() {
         return dropChance;
     }
-    public boolean isDirect(){
+
+    public boolean isDirect() {
         return isDirect;
     }
-    public MiningMessage getMessage(){
+
+    public MiningMessage getMessage() {
         return message;
     }
-    public void serialize(ConfigurationSection section){
+
+    public void serialize(ConfigurationSection section) {
         if (section == null) throw new IllegalArgumentException("Section is null");
         section.set("rangeMin", range.min);
         section.set("rangeMax", range.max);
         section.set("dropChance", dropChance);
         section.set("isDirect", isDirect);
-        if(sound!=null){
+        if (sound != null) {
             section.set("sound", sound.name());
         }
-        if (message != null){
+        if (message != null) {
             ConfigurationSection messageSection = section.createSection("message");
             message.serialize(messageSection);
         }
 
     }
+
     public static BaseDrop deserializeBaseDrop(ConfigurationSection section) {
         int rangeMin = section.getInt("rangeMin");
         int rangeMax = section.getInt("rangeMax");
@@ -95,10 +105,10 @@ public abstract class BaseDrop implements MiningDrop {
         }
 
         Sound sound = null;
-        if(section.getString("sound")!=null){
+        if (section.getString("sound") != null) {
             sound = Sound.valueOf(section.getString("sound"));
         }
-        return new BaseDrop(range, dropChance, isDirect,sound, message) {
+        return new BaseDrop(range, dropChance, isDirect, message,sound) {
 
             @Override
             public boolean testDrop() {

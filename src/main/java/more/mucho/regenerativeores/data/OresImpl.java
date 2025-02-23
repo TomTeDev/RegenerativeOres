@@ -80,7 +80,12 @@ public class OresImpl implements Ores {
                     MiningBlock material = MiningBlockFactory.fromConfig(oreSection.getConfigurationSection("material"));
                     MiningBlock replacement = MiningBlockFactory.fromConfig(oreSection.getConfigurationSection("replacement"));
 
-                    OreBuilder builder = new OreBuilder(id, delay, material, replacement);
+
+
+                    OreBuilder builder = new OreBuilder(id);
+                    builder.setDelay(delay);
+                    builder.setMaterial(material);
+                    builder.setReplacement(replacement);
                     if(oreSection.getConfigurationSection("permissionTest") != null) {
                         builder.withPermissionTest(PlayerTestsFactory.fromConfig(oreSection.getConfigurationSection("permissionTest")));
                     }
