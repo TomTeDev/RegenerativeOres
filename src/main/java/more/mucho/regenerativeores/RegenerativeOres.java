@@ -74,7 +74,6 @@ public final class RegenerativeOres extends JavaPlugin {
     }
 
     private void startWorkload() {
-
         stopWorkload();
         workloadThread = new WorkloadThread();
         workloadTask = Bukkit.getScheduler().runTaskTimer(this, workloadThread, 0, 1);
